@@ -1373,6 +1373,10 @@ void CMobEntity::OnDisengage(CAttackState& state)
 
     CBattleEntity::OnDisengage(state);
 
+    // Clear staggers if applicable
+    m_StaggerMask = 0;
+    m_StaggerTimer = 0;
+
     luautils::OnMobDisengage(this);
 }
 

@@ -24,6 +24,7 @@
 #include <cmath>
 
 #include "../grades.h"
+#include "../ai/ai_container.h"
 #include "../items/item_weapon.h"
 #include "../lua/luautils.h"
 #include "../mob_modifier.h"
@@ -1380,24 +1381,71 @@ Usage:
         return PMob;
     }
 
-    void WeaknessTrigger(CBaseEntity* PTarget, WeaknessType level)
+    void WeaknessTrigger(CBaseEntity* PTarget, STAGGER_TYPE staggerType, STAGGER_COLOR staggerColor)
     {
-        uint16 animationID = 0;
-        switch (level)
+        auto* PMob = static_cast<CMobEntity*>(PTarget);
+
+        if (PMob->m_StaggerTimer != 0)
         {
-            case WeaknessType::RED:
+            // Do not allow staggers while currently staggered.
+            // TODO: Check for current casting and skill in use as well.
+            return;
+        }
+
+        uint16 animationID = 0;
+        switch (staggerColor)
+        {
+            case STAGGER_COLOR::RED:
                 animationID = 1806;
                 break;
-            case WeaknessType::YELLOW:
+            case STAGGER_COLOR::YELLOW:
                 animationID = 1807;
                 break;
-            case WeaknessType::BLUE:
+            case STAGGER_COLOR::BLUE:
                 animationID = 1808;
                 break;
-            case WeaknessType::WHITE:
+            case STAGGER_COLOR::WHITE:
                 animationID = 1946;
                 break;
         }
+
+        // TODO: Voidwatch Staggers
+        if (staggerType == STAGGER_TYPE::DYNAMIS)
+        {
+            if (PMob->m_StaggerMask != 0)
+            {
+                // Only allow Dynamis Mobs to be procced once per fight
+                return;
+            }
+
+            PMob->m_StaggerMask |= staggerColor;
+
+            // Apply effects for Dynamis.  This is a guess for how long the mob
+            // should be inactive based on color.
+            PTarget->PAI->Inactive((1 + staggerColor) * 5s, false);
+        }
+        else
+        {
+            PMob->m_StaggerMask ^= staggerColor;
+
+            switch (staggerColor)
+            {
+                case STAGGER_COLOR::RED:
+                    // TODO: Verify stagger time for Abyssea Red Procs
+                    PTarget->PAI->Inactive(15s, false);
+                    break;
+                case STAGGER_COLOR::YELLOW:
+
+                    break;
+                case STAGGER_COLOR::BLUE:
+
+                    break;
+                default:
+                    ShowWarning("Invalid staggerColor for Abyssea passed to mobutils::weaknessTrigger()!");
+                    break;
+            }
+        }
+
         action_t action;
         action.actiontype      = ACTION_MOBABILITY_FINISH;
         action.id              = PTarget->id;

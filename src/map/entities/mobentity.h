@@ -184,6 +184,10 @@ public:
 
     uint32 m_DropID; // dropid of items to be dropped. dropid in Database (mob_droplist)
 
+    // Stagger Tracking
+    uint8       m_StaggerMask;
+    std::time_t m_StaggerTimer;
+
     // ItemID, <Droprate, DropType>
     std::map<uint16, std::pair<uint16, uint8>> m_DropListModifications;
 

@@ -760,7 +760,7 @@ public:
     void useMobAbility(sol::variadic_args va);                    // forces a mob to use a mobability (parameter = skill ID)
     bool hasTPMoves();
 
-    void weaknessTrigger(uint8 level);
+    void weaknessTrigger(uint8 staggerType, uint8 staggerColor);
     bool hasPreventActionEffect();
     void stun(uint32 milliseconds);
 

@@ -12816,11 +12816,11 @@ bool CLuaBaseEntity::hasTPMoves()
  *  Notes   : Used in scripts/mixins/abyssea_nm.lua
  ************************************************************************/
 
-void CLuaBaseEntity::weaknessTrigger(uint8 level)
+void CLuaBaseEntity::weaknessTrigger(uint8 staggerType, uint8 staggerColor)
 {
     XI_DEBUG_BREAK_IF(m_PBaseEntity->objtype != TYPE_MOB);
 
-    mobutils::WeaknessTrigger(m_PBaseEntity, static_cast<WeaknessType>(level));
+    mobutils::WeaknessTrigger(m_PBaseEntity, static_cast<STAGGER_TYPE>(staggerType), static_cast<STAGGER_COLOR>(staggerColor));
 }
 
 /************************************************************************

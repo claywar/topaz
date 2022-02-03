@@ -37,12 +37,19 @@ typedef struct
     std::vector<CModifier*> mobMods;
 } ModsList_t;
 
-enum class WeaknessType
+enum STAGGER_COLOR
 {
     BLUE   = 0,
     YELLOW = 1,
     RED    = 2,
     WHITE  = 3
+};
+
+enum STAGGER_TYPE
+{
+    ABYSSEA   = 0,
+    DYNAMIS   = 1,
+    VOIDWATCH = 2,
 };
 
 typedef std::unordered_map<uint32, ModsList_t*> ModsMap_t;
@@ -78,7 +85,7 @@ namespace mobutils
 
     void        SetSpellList(CMobEntity*, uint16);
     CMobEntity* InstantiateAlly(uint32 groupid, uint16 zoneID, CInstance* = nullptr);
-    void        WeaknessTrigger(CBaseEntity* PTarget, WeaknessType level);
+    void        WeaknessTrigger(CBaseEntity* PTarget, STAGGER_TYPE staggerType, STAGGER_COLOR staggerColor);
 }; // namespace mobutils
 
 #endif

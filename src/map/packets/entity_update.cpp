@@ -26,6 +26,8 @@
 
 #include "entity_update.h"
 
+#include "../ai/ai_container.h"
+#include "../ai/states/inactive_state.h"
 #include "../entities/baseentity.h"
 #include "../entities/mobentity.h"
 #include "../entities/npcentity.h"
@@ -133,7 +135,7 @@ CEntityUpdatePacket::CEntityUpdatePacket(CBaseEntity* PEntity, ENTITYUPDATE type
                     {
                         ref<uint8>(0x27) |= 0x08;
                     }
-                    ref<uint8>(0x28) |= (PMob->StatusEffectContainer->HasStatusEffect(EFFECT_TERROR) ? 0x10 : 0x00);
+                    ref<uint8>(0x28) |= (PMob->PAI->IsCurrentState<CInactiveState>() ? 0x10 : 0x00);
                     ref<uint8>(0x28) |= PMob->health.hp > 0 && PMob->animation == ANIMATION_DEATH ? 0x08 : 0;
                     ref<uint8>(0x29) = static_cast<uint8>(PEntity->allegiance);
                     ref<uint8>(0x2B) = PEntity->namevis;

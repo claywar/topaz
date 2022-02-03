@@ -58,6 +58,9 @@ CMobEntity::CMobEntity()
 
     m_DropID = 0;
 
+    m_StaggerMask = 0;
+    m_StaggerTimer = 0;
+
     m_minLevel = 1;
     m_maxLevel = 1;
 

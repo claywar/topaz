@@ -1383,6 +1383,11 @@ Usage:
 
     void WeaknessTrigger(CBaseEntity* PTarget, STAGGER_TYPE staggerType, STAGGER_COLOR staggerColor)
     {
+        if (PTarget->objtype != TYPE_MOB)
+        {
+            return;
+        }
+
         auto* PMob = static_cast<CMobEntity*>(PTarget);
 
         if (PMob->m_StaggerTimer != 0)
@@ -1435,14 +1440,16 @@ Usage:
                     PTarget->PAI->Inactive(15s, false);
                     break;
                 case STAGGER_COLOR::YELLOW:
-
+                    PMob->m_StaggerTimer = time(nullptr) + 30;
+                    PMob->PAI->GetController()->SetMagicCastingEnabled(false);
                     break;
                 case STAGGER_COLOR::BLUE:
-
+                    PMob->m_StaggerTimer = time(nullptr) + 30;
+                    PMob->PAI->GetController()->SetWeaponSkillEnabled(false);
                     break;
                 default:
                     ShowWarning("Invalid staggerColor for Abyssea passed to mobutils::weaknessTrigger()!");
-                    break;
+                    return;
             }
         }
 

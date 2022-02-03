@@ -1,4 +1,4 @@
-/*
+﻿/*
 ===========================================================================
 
 Copyright (c) 2010-2015 Darkstar Dev Teams
@@ -48,6 +48,14 @@ void CMobController::Tick(time_point tick)
     TracyZoneIString(PMob->GetName());
 
     m_Tick = tick;
+
+    // Reset Stagger Timer and enable abilities
+    if (PMob->m_StaggerTimer > 0 && time(nullptr) >= PMob->m_StaggerTimer)
+    {
+        PMob->PAI->GetController()->SetMagicCastingEnabled(true);
+        PMob->PAI->GetController()->SetWeaponSkillEnabled(true);
+        PMob->m_StaggerTimer = 0;
+    }
 
     if (PMob->isAlive())
     {

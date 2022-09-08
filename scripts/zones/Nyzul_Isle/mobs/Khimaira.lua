@@ -3,9 +3,9 @@
 -- Area: Nyzul Isle
 -- Info : Floor 60 80 100 Boss
 -----------------------------------
-mixins = { require("scripts/mixins/nyzul_boss_drops") }
-require("scripts/globals/nyzul")
-require("scripts/globals/status")
+mixins = { require('scripts/mixins/nyzul_boss_drops') }
+require('scripts/globals/nyzul')
+require('scripts/globals/status')
 -----------------------------------
 local entity = {}
 

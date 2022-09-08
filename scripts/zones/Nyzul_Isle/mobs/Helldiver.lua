@@ -3,7 +3,7 @@
 -- Area: Nyzul Isle
 -- Info: NM
 -----------------------------------
-require("scripts/globals/nyzul")
+require('scripts/globals/nyzul')
 -----------------------------------
 local entity = {}
 

@@ -2,9 +2,9 @@
 -- Area: Nyzul Isle (Path of Darkness)
 --  Mob: Amnaf Psycheflayer
 -----------------------------------
-local ID = require("scripts/zones/Nyzul_Isle/IDs")
-require("scripts/globals/status")
-require("scripts/globals/msg")
+local ID = require('scripts/zones/Nyzul_Isle/IDs')
+require('scripts/globals/status')
+require('scripts/globals/msg')
 -----------------------------------
 local entity = {}
 

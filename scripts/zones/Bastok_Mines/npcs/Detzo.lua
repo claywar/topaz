@@ -22,19 +22,19 @@ entity.onTrade = function(player, npc, trade)
 end
 
 entity.onTrigger = function(player, npc)
-    local Rivals = player:getQuestStatus(xi.quest.log_id.BASTOK, xi.quest.id.bastok.RIVALS)
+    local rivals = player:getQuestStatus(xi.quest.log_id.BASTOK, xi.quest.id.bastok.RIVALS)
 
     if player:getCharVar("theTalekeeperGiftCS") == 1 then
         player:startEvent(171)
         player:setCharVar("theTalekeeperGiftCS", 2)
 
     elseif
-        Rivals == QUEST_AVAILABLE and
-        player:getFameLevel(BASTOK) >= 3
+        rivals == QUEST_AVAILABLE and
+        player:getFameLevel(xi.quest.fame_area.BASTOK) >= 3
     then
         player:startEvent(93)
 
-    elseif Rivals == QUEST_ACCEPTED then
+    elseif rivals == QUEST_ACCEPTED then
         player:showText(npc, ID.text.DETZO_RIVALS_DIALOG)
 
     else
@@ -55,7 +55,7 @@ entity.onEventFinish = function(player, csid, option)
             player:addTitle(xi.title.CONTEST_RIGGER)
             player:addItem(13571)
             player:messageSpecial(ID.text.ITEM_OBTAINED, 13571)
-            player:addFame(BASTOK, 30)
+            player:addFame(xi.quest.fame_area.BASTOK, 30)
             player:completeQuest(xi.quest.log_id.BASTOK, xi.quest.id.bastok.RIVALS)
         end
     end

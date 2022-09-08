@@ -6,7 +6,7 @@
 -----------------------------------
 local ID = require("scripts/zones/Bastok_Mines/IDs")
 require("scripts/globals/keyitems")
-require("scripts/settings/main")
+require("scripts/globals/settings")
 require("scripts/globals/quests")
 -----------------------------------
 local entity = {}
@@ -69,16 +69,16 @@ entity.onEventFinish = function(player, csid, option)
         player:messageSpecial(ID.text.KEYITEM_OBTAINED, xi.ki.TAMIS_NOTE)
         player:setCharVar("Groceries", 1)
     elseif csid == 112 then
-        player:addFame(BASTOK, 8)
+        player:addFame(xi.quest.fame_area.BASTOK, 8)
         player:setCharVar("Groceries", 0)
-        player:addGil(xi.settings.GIL_RATE * 10)
-        player:messageSpecial(ID.text.GIL_OBTAINED, xi.settings.GIL_RATE * 10)
+        player:addGil(xi.settings.main.GIL_RATE * 10)
+        player:messageSpecial(ID.text.GIL_OBTAINED, xi.settings.main.GIL_RATE * 10)
     elseif csid == 113 then
         if player:getFreeSlotsCount() >= 1 then
             player:tradeComplete()
             player:setCharVar("Groceries", 0)
             player:completeQuest(xi.quest.log_id.BASTOK, xi.quest.id.bastok.GROCERIES)
-            player:addFame(BASTOK, 75)
+            player:addFame(xi.quest.fame_area.BASTOK, 75)
             player:addItem(13594) -- Rabbit Mantle
             player:messageSpecial(ID.text.ITEM_OBTAINED, 13594)
         else

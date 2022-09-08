@@ -12,7 +12,7 @@
 -----------------------------------
 require("scripts/globals/magic")
 require("scripts/globals/status")
-require("scripts/settings/main")
+require("scripts/globals/settings")
 require("scripts/globals/weaponskills")
 -----------------------------------
 local weaponskill_object = {}
@@ -25,9 +25,10 @@ weaponskill_object.onUseWeaponSkill = function(player, target, wsID, tp, primary
     params.ele = xi.magic.ele.DARK
     params.skill = xi.skill.KATANA
     params.includemab = true
-
-    if (xi.settings.USE_ADOULIN_WEAPON_SKILL_CHANGES == true) then
+    -- to do ignore shadow and blink https://www.bg-wiki.com/ffxi/Blade:_Ei
+    if xi.settings.main.USE_ADOULIN_WEAPON_SKILL_CHANGES then
         params.str_wsc = 0.4 params.int_wsc = 0.4
+        params.ftp200 = 3 params.ftp300 = 5
     end
 
     local damage, tpHits, extraHits = doMagicWeaponskill(player, target, wsID, params, tp, action, primary)

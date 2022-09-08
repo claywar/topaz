@@ -1,30 +1,33 @@
-
+-----------------------------------
+-- BCNM Functions
+-----------------------------------
 require("scripts/globals/keyitems")
 require("scripts/globals/missions")
 require("scripts/globals/quests")
 require("scripts/globals/status")
 require("scripts/globals/zone")
 require("scripts/globals/msg")
-
 -----------------------------------
+xi = xi or {}
+xi.bcnm = xi.bcnm or {}
+
 -- battlefields by zone
 -- captured from client 2020-10-24
------------------------------------
-
+local battlefields =
+{
 --[[
-    [zoneId] = {
+    [zoneId] =
+    {
         {bit, battlefieldIdInDatabase, requiredItemToTrade}
     },
 --]]
-
-local battlefields = {
     [xi.zone.BEARCLAW_PINNACLE] =
     {
         { 0,  640,    0},   -- Flames of the Dead (PM5-3 U3)
      -- { 1,  641,    0},   -- Follow the White Rabbit (ENM)
      -- { 2,  642,    0},   -- When Hell Freezes Over (ENM)
      -- { 3,  643,    0},   -- Brothers (ENM) -- TODO: Chthonian Ray mobskill
-     -- { 4,  644,    0},   -- Holy Cow (ENM)
+        { 4,  644,    0},   -- Holy Cow (ENM)
      -- { 5,    ?, 3454},   -- Taurassic Park (HKC30)
     },
 
@@ -150,8 +153,8 @@ local battlefields = {
 
     [xi.zone.APOLLYON] =
     {
-     -- { 0, 1291,    0},   -- SW Apollyon
-     -- { 1, 1290,    0},   -- NW Apollyon
+        { 0, 1291,    0},   -- SW Apollyon
+        { 1, 1290,    0},   -- NW Apollyon
         { 2, 1293,    0},   -- SE Apollyon
         { 3, 1292,    0},   -- NE Apollyon
      -- { 4, 1296,   -2},   -- Central Apollyon (multiple items needed: 1909 1910 1987 1988)
@@ -529,37 +532,36 @@ local battlefields = {
 }
 
 -----------------------------------
--- check requirements for registrant and allies
+-- Check requirements for registrant and allies
 -----------------------------------
-
 local function checkReqs(player, npc, bfid, registrant)
-    local mi      = xi.mission.id
-    local npcid   = npc:getID()
-    local mjob    = player:getMainJob()
-    local mlvl    = player:getMainLvl()
-    local nat     = player:getCurrentMission(player:getNation())
-    local sandy   = player:getCurrentMission(SANDORIA)
-    local basty   = player:getCurrentMission(BASTOK)
-    local windy   = player:getCurrentMission(WINDURST)
-    local roz     = player:getCurrentMission(ZILART)
-    local cop     = player:getCurrentMission(COP)
-    local toau    = player:getCurrentMission(TOAU)
-    local wotg    = player:getCurrentMission(xi.mission.log_id.WOTG)
-    local asa     = player:getCurrentMission(ASA)
+    local mi       = xi.mission.id
+    local npcid    = npc:getID()
+    local mjob     = player:getMainJob()
+    local mlvl     = player:getMainLvl()
+    local nat      = player:getCurrentMission(player:getNation())
+    local sandy    = player:getCurrentMission(xi.mission.log_id.SANDORIA)
+    local basty    = player:getCurrentMission(xi.mission.log_id.BASTOK)
+    local windy    = player:getCurrentMission(xi.mission.log_id.WINDURST)
+    local roz      = player:getCurrentMission(xi.mission.log_id.ZILART)
+    local cop      = player:getCurrentMission(xi.mission.log_id.COP)
+    local toau     = player:getCurrentMission(xi.mission.log_id.TOAU)
+    local wotg     = player:getCurrentMission(xi.mission.log_id.WOTG)
+    local asa      = player:getCurrentMission(xi.mission.log_id.ASA)
     local natStat  = player:getMissionStatus(player:getNation())
     local rozStat  = player:getMissionStatus(xi.mission.log_id.ZILART)
     local copStat  = player:getCharVar("PromathiaStatus")
     local toauStat = player:getMissionStatus(xi.mission.log_id.TOAU)
     local wotgStat = player:getMissionStatus(xi.mission.log_id.WOTG)
-    local stc = player:hasCompletedMission(xi.mission.log_id.SANDORIA, mi.sandoria.SAVE_THE_CHILDREN)
-    local dm1 = player:getQuestStatus(xi.quest.log_id.OUTLANDS, xi.quest.id.outlands.DIVINE_MIGHT)
-    local dm2 = player:getQuestStatus(xi.quest.log_id.OUTLANDS, xi.quest.id.outlands.DIVINE_MIGHT_REPEAT)
+    local stc      = player:hasCompletedMission(xi.mission.log_id.SANDORIA, mi.sandoria.SAVE_THE_CHILDREN)
+    local dm1      = player:getQuestStatus(xi.quest.log_id.OUTLANDS, xi.quest.id.outlands.DIVINE_MIGHT)
+    local dm2      = player:getQuestStatus(xi.quest.log_id.OUTLANDS, xi.quest.id.outlands.DIVINE_MIGHT_REPEAT)
 
     local function getEntranceOffset(offset)
         return zones[player:getZoneID()].npc.ENTRANCE_OFFSET + offset
     end
 
-    -- requirements to register a battlefield
+    -- Requirements to register a battlefield
     local registerReqs =
     {
         [   0] = function() return ( (basty == mi.bastok.THE_EMISSARY_SANDORIA2 or windy == mi.windurst.THE_THREE_KINGDOMS_SANDORIA2) and natStat == 9                     ) end, -- Mission 2-3
@@ -593,7 +595,7 @@ local function checkReqs(player, npc, bfid, registrant)
         [ 196] = function() return ( mjob == xi.job.DRG and mlvl >= 66                                                                                                     ) end, -- Quest: Shattering Stars (DRG LB5)
         [ 224] = function() return ( player:hasKeyItem(xi.ki.MOON_BAUBLE)                                                                                                  ) end, -- Quest: The Moonlit Path
         [ 225] = function() return ( windy == mi.windurst.MOON_READING and natStat == 2                                                                                    ) end, -- Windy 9-2: Moon Reading
-        [ 256] = function() return ( roz == mi.zilart.RETURN_TO_DELKFUTTS_TOWER and rozStat == 3                                                                           ) end, -- ZM8: Return to Delkfutt's Tower
+        [ 256] = function() return ( roz == mi.zilart.RETURN_TO_DELKFUTTS_TOWER and rozStat == 2                                                                           ) end, -- ZM8: Return to Delkfutt's Tower
         [ 288] = function() return ( roz == mi.zilart.ARK_ANGELS and rozStat == 1 and npcid == getEntranceOffset(0) and not player:hasKeyItem(xi.ki.SHARD_OF_APATHY)       ) end, -- ZM14: Ark Angels (Hume)
         [ 289] = function() return ( roz == mi.zilart.ARK_ANGELS and rozStat == 1 and npcid == getEntranceOffset(1) and not player:hasKeyItem(xi.ki.SHARD_OF_COWARDICE)    ) end, -- ZM14: Ark Angels (Tarutaru)
         [ 290] = function() return ( roz == mi.zilart.ARK_ANGELS and rozStat == 1 and npcid == getEntranceOffset(2) and not player:hasKeyItem(xi.ki.SHARD_OF_ENVY)         ) end, -- ZM14: Ark Angels (Mithra)
@@ -604,15 +606,15 @@ local function checkReqs(player, npc, bfid, registrant)
         [ 416] = function() return ( player:hasKeyItem(xi.ki.TUNING_FORK_OF_WIND)                                                                                          ) end, -- Quest: Trial by Wind
         [ 417] = function() return ( player:getCharVar("CarbuncleDebacleProgress") == 6                                                                                    ) end, -- Quest: Carbuncle Debacle
         [ 418] = function() return ( mjob == xi.job.SMN and mlvl >= 20                                                                                                     ) end, -- Quest: Trial-size Trial by Wind
-        [ 420] = function() return ( asa == mi.asa.SUGAR_COATED_DIRECTIVE and player:hasKeyItem(xi.ki.DOMINAS_EMERALD_SEAL)                                                ) end, -- ASA4: Sugar-coated Directive
+        [ 420] = function() return ( asa >= mi.asa.SUGAR_COATED_DIRECTIVE and player:hasKeyItem(xi.ki.DOMINAS_EMERALD_SEAL)                                                ) end, -- ASA4: Sugar-coated Directive
         [ 448] = function() return ( player:hasKeyItem(xi.ki.TUNING_FORK_OF_LIGHTNING)                                                                                     ) end, -- Quest: Trial by Lightning
         [ 449] = function() return ( player:getCharVar("CarbuncleDebacleProgress") == 3                                                                                    ) end, -- Quest: Carbuncle Debacle
         [ 450] = function() return ( mjob == xi.job.SMN and mlvl >= 20                                                                                                     ) end, -- Quest: Trial-size Trial by Lightning
-        [ 452] = function() return ( asa == mi.asa.SUGAR_COATED_DIRECTIVE and player:hasKeyItem(xi.ki.DOMINAS_VIOLET_SEAL)                                                 ) end, -- ASA4: Sugar-coated Directive
+        [ 452] = function() return ( asa >= mi.asa.SUGAR_COATED_DIRECTIVE and player:hasKeyItem(xi.ki.DOMINAS_VIOLET_SEAL)                                                 ) end, -- ASA4: Sugar-coated Directive
         [ 480] = function() return ( player:hasKeyItem(xi.ki.TUNING_FORK_OF_ICE)                                                                                           ) end, -- Quest: Trial by Ice
         [ 481] = function() return ( player:getCharVar("ClassReunionProgress") == 5                                                                                        ) end, -- Quest: Class Reunion
         [ 482] = function() return ( mjob == xi.job.SMN and mlvl >= 20                                                                                                     ) end, -- Quest: Trial-size Trial by Ice
-        [ 484] = function() return ( asa == mi.asa.SUGAR_COATED_DIRECTIVE and player:hasKeyItem(xi.ki.DOMINAS_AZURE_SEAL)                                                  ) end, -- ASA4: Sugar-coated Directive
+        [ 484] = function() return ( asa >= mi.asa.SUGAR_COATED_DIRECTIVE and player:hasKeyItem(xi.ki.DOMINAS_AZURE_SEAL)                                                  ) end, -- ASA4: Sugar-coated Directive
         [ 512] = function() return ( nat == mi.nation.ARCHLICH and natStat == 11                                                                                           ) end, -- Mission 5-1
         [ 516] = function() return ( sandy == mi.sandoria.THE_HEIR_TO_THE_LIGHT and natStat == 3                                                                           ) end, -- Sandy 9-2: The Heir to the Light
         [ 517] = function() return ( mjob == xi.job.PLD and mlvl >= 66                                                                                                     ) end, -- Quest: Shattering Stars (PLD LB5)
@@ -622,20 +624,21 @@ local function checkReqs(player, npc, bfid, registrant)
         [ 533] = function() return ( player:hasKeyItem(xi.ki.SOUL_GEM_CLASP)                                                                                               ) end, -- Quest: Beyond Infinity
         [ 544] = function() return ( player:hasKeyItem(xi.ki.TUNING_FORK_OF_FIRE)                                                                                          ) end, -- Quest: Trial by Fire
         [ 545] = function() return ( mjob == xi.job.SMN and mlvl >= 20                                                                                                     ) end, -- Quest: Trial-size Trial by Fire
-        [ 547] = function() return ( asa == mi.asa.SUGAR_COATED_DIRECTIVE and player:hasKeyItem(xi.ki.DOMINAS_SCARLET_SEAL)                                                ) end, -- ASA4: Sugar-coated Directive
+        [ 547] = function() return ( asa >= mi.asa.SUGAR_COATED_DIRECTIVE and player:hasKeyItem(xi.ki.DOMINAS_SCARLET_SEAL)                                                ) end, -- ASA4: Sugar-coated Directive
         [ 576] = function() return ( player:hasKeyItem(xi.ki.TUNING_FORK_OF_EARTH)                                                                                         ) end, -- Quest: Trial by Earth
         [ 577] = function() return ( player:getCharVar("ThePuppetMasterProgress") == 2                                                                                     ) end, -- Quest: The Puppet Master
         [ 578] = function() return ( mjob == xi.job.SMN and mlvl >= 20                                                                                                     ) end, -- Quest: Trial-size Trial by Earth
-        [ 580] = function() return ( asa == mi.asa.SUGAR_COATED_DIRECTIVE and player:hasKeyItem(xi.ki.DOMINAS_AMBER_SEAL)                                                  ) end, -- ASA4: Sugar-coated Directive
+        [ 580] = function() return ( asa >= mi.asa.SUGAR_COATED_DIRECTIVE and player:hasKeyItem(xi.ki.DOMINAS_AMBER_SEAL)                                                  ) end, -- ASA4: Sugar-coated Directive
         [ 608] = function() return ( player:hasKeyItem(xi.ki.TUNING_FORK_OF_WATER)                                                                                         ) end, -- Quest: Trial by Water
         [ 609] = function() return ( mjob == xi.job.SMN and mlvl >= 20                                                                                                     ) end, -- Quest: Trial-size Trial by Water
-        [ 611] = function() return ( asa == mi.asa.SUGAR_COATED_DIRECTIVE and player:hasKeyItem(xi.ki.DOMINAS_CERULEAN_SEAL)                                               ) end, -- ASA4: Sugar-coated Directive
-        [ 640] = function() return ( cop == mi.cop.THREE_PATHS and player:getCharVar("COP_Ulmia_s_Path") == 6                                                              ) end, -- PM5-3 U3: Flames for the Dead
-        [ 641] = function() return ( player:hasKeyItem(xi.ki.ZEPHYR_FAN)                                                                                                   ) end, -- ENM: Follow the White Rabbit
-        [ 642] = function() return ( player:hasKeyItem(xi.ki.ZEPHYR_FAN)                                                                                                   ) end, -- ENM: When Hell Freezes Over
-        [ 643] = function() return ( player:hasKeyItem(xi.ki.ZEPHYR_FAN)                                                                                                   ) end, -- ENM: Brothers
-        [ 644] = function() return ( player:hasKeyItem(xi.ki.ZEPHYR_FAN)                                                                                                   ) end, -- ENM: Holy Cow
-        [ 672] = function() return ( cop == mi.cop.THREE_PATHS and player:getCharVar("COP_Ulmia_s_Path") == 5                                                              ) end, -- PM5-3 U2: Head Wind
+        [ 611] = function() return ( asa >= mi.asa.SUGAR_COATED_DIRECTIVE and player:hasKeyItem(xi.ki.DOMINAS_CERULEAN_SEAL)                                               ) end, -- ASA4: Sugar-coated Directive
+        [ 640] = function() return ( cop == mi.cop.THREE_PATHS and player:getMissionStatus(xi.mission.log_id.COP, xi.mission.status.COP.ULMIA) == 8 and
+                                     npcid == getEntranceOffset(0)                                                                                                         ) end, -- PM5-3 U3: Flames for the Dead
+        [ 641] = function() return ( player:hasKeyItem(xi.ki.ZEPHYR_FAN) and npcid == getEntranceOffset(2)                                                                 ) end, -- ENM: Follow the White Rabbit
+        [ 642] = function() return ( player:hasKeyItem(xi.ki.ZEPHYR_FAN) and npcid == getEntranceOffset(4)                                                                 ) end, -- ENM: When Hell Freezes Over
+        [ 643] = function() return ( player:hasKeyItem(xi.ki.ZEPHYR_FAN) and npcid == getEntranceOffset(6)                                                                 ) end, -- ENM: Brothers
+        [ 644] = function() return ( player:hasKeyItem(xi.ki.ZEPHYR_FAN) and npcid == getEntranceOffset(8)                                                                 ) end, -- ENM: Holy Cow
+        [ 672] = function() return ( cop == mi.cop.THREE_PATHS and player:getMissionStatus(xi.mission.log_id.COP, xi.mission.status.COP.ULMIA) == 7                        ) end, -- PM5-3 U2: Head Wind
         [ 673] = function() return ( player:hasKeyItem(xi.ki.MIASMA_FILTER)                                                                                                ) end, -- ENM: Like the Wind
         [ 674] = function() return ( player:hasKeyItem(xi.ki.MIASMA_FILTER)                                                                                                ) end, -- ENM: Sheep in Antlion's Clothing
         [ 675] = function() return ( player:hasKeyItem(xi.ki.MIASMA_FILTER)                                                                                                ) end, -- ENM: Shell We Dance?
@@ -645,7 +648,7 @@ local function checkReqs(player, npc, bfid, registrant)
         [ 704] = function() return ( cop == mi.cop.DARKNESS_NAMED and player:getCharVar('Mission[6][358]Status') == 4                                                      ) end, -- PM3-5: Darkness Named
         [ 705] = function() return ( player:hasKeyItem(xi.ki.ASTRAL_COVENANT)                                                                                              ) end, -- ENM: Test Your Mite
         [ 706] = function() return ( player:hasKeyItem(xi.ki.VIAL_OF_DREAM_INCENSE)                                                                                        ) end, -- Quest: Waking Dreams
-        [ 736] = function() return ( cop == mi.cop.THREE_PATHS and player:getCharVar("COP_Louverance_s_Path") == 5                                                         ) end, -- PM5-3 L3: A Century of Hardship
+        [ 736] = function() return ( cop == mi.cop.THREE_PATHS and player:getMissionStatus(xi.mission.log_id.COP, xi.mission.status.COP.LOUVERANCE) == 8                   ) end, -- PM5-3 L3: A Century of Hardship
         [ 738] = function() return ( player:hasKeyItem(xi.ki.SHAFT_2716_OPERATING_LEVER)                                                                                   ) end, -- ENM: Bionic Bug
         [ 739] = function() return ( player:hasKeyItem(xi.ki.SHAFT_GATE_OPERATING_DIAL)                                                                                    ) end, -- ENM: Pulling Your Strings
         [ 740] = function() return ( player:hasKeyItem(xi.ki.SHAFT_GATE_OPERATING_DIAL)                                                                                    ) end, -- ENM: Automaton Assault
@@ -655,18 +658,19 @@ local function checkReqs(player, npc, bfid, registrant)
         [ 801] = function() return ( player:hasKeyItem(xi.ki.CENSER_OF_ANTIPATHY)                                                                                          ) end, -- ENM: You Are What You Eat
         [ 832] = function() return ( (cop == mi.cop.BELOW_THE_ARKS) or (cop == mi.cop.THE_MOTHERCRYSTALS and not player:hasKeyItem(xi.ki.LIGHT_OF_MEA))                    ) end, -- PM1-3: The Mothercrystals
         [ 833] = function() return ( player:hasKeyItem(xi.ki.CENSER_OF_ANIMUS)                                                                                             ) end, -- ENM: Playing Host
-        [ 864] = function() return ( cop == mi.cop.DESIRES_OF_EMPTINESS and copStat == 8                                                                                   ) end, -- PM5-2: Desires of Emptiness
+        [ 864] = function() return ( cop == mi.cop.DESIRES_OF_EMPTINESS and player:getCharVar('Mission[6][518]Status') == 2                                                ) end, -- PM5-2: Desires of Emptiness
         [ 865] = function() return ( player:hasKeyItem(xi.ki.CENSER_OF_ACRIMONY)                                                                                           ) end, -- ENM: Pulling the Plug
         [ 896] = function() return ( player:getQuestStatus(xi.quest.log_id.JEUNO, xi.quest.id.jeuno.STORMS_OF_FATE) == QUEST_ACCEPTED and
                                      player:getCharVar('StormsOfFate') == 2                                                                                                ) end, -- Quest: Storms of Fate
-        [ 960] = function() return ( cop == mi.cop.ANCIENT_VOWS and player:getCharVar('Mission[6][248]Status') == 2                                                        ) end, -- PM2-5: Ancient Vows
-        [ 961] = function() return ( cop == mi.cop.THE_SAVAGE and copStat == 1                                                                                             ) end, -- PM4-2: The Savage
+        [ 960] = function() return ( cop == mi.cop.ANCIENT_VOWS and player:getCharVar('Mission[6][248]Status') == 2 and
+                                     player:getPreviousZone() == xi.zone.RIVERNE_SITE_A01                                                                                  ) end, -- PM2-5: Ancient Vows
+        [ 961] = function() return ( cop == mi.cop.THE_SAVAGE and player:getCharVar('Mission[6][418]Status') == 1 and player:getPreviousZone() == xi.zone.RIVERNE_SITE_B01 ) end, -- PM4-2: The Savage
         [ 962] = function() return ( player:hasKeyItem(xi.ki.MONARCH_BEARD)                                                                                                ) end, -- ENM: Fire in the Sky
         [ 963] = function() return ( player:hasKeyItem(xi.ki.MONARCH_BEARD)                                                                                                ) end, -- ENM: Bad Seed
         [ 964] = function() return ( player:hasKeyItem(xi.ki.MONARCH_BEARD)                                                                                                ) end, -- ENM: Bugard in the Clouds
         [ 965] = function() return ( player:hasKeyItem(xi.ki.MONARCH_BEARD)                                                                                                ) end, -- ENM: Beloved of Atlantes
-        [ 992] = function() return ( cop == mi.cop.ONE_TO_BE_FEARED and copStat == 3                                                                                       ) end, -- PM6-4: One to be Feared
-        [ 993] = function() return ( cop == mi.cop.THE_WARRIOR_S_PATH                                                                                                      ) end, -- PM7-5: The Warrior's Path
+        [ 992] = function() return ( cop == mi.cop.ONE_TO_BE_FEARED and player:getCharVar('Mission[6][638]Status') == 3                                                    ) end, -- PM6-4: One to be Feared
+        [ 993] = function() return ( cop == mi.cop.THE_WARRIORS_PATH and player:getCharVar('Mission[6][748]Status') == 1                                                   ) end, -- PM7-5: The Warrior's Path
         [1024] = function() return ( cop == mi.cop.WHEN_ANGELS_FALL and copStat == 4                                                                                       ) end, -- PM8-3: When Angels Fall
         [1056] = function() return ( cop == mi.cop.DAWN and copStat == 2                                                                                                   ) end, -- PM8-4: Dawn
         [1057] = function() return ( player:getQuestStatus(xi.quest.log_id.JEUNO, xi.quest.id.jeuno.APOCALYPSE_NIGH) == QUEST_ACCEPTED and
@@ -675,7 +679,7 @@ local function checkReqs(player, npc, bfid, registrant)
         [1091] = function() return ( mjob == xi.job.COR and mlvl >= 66                                                                                                     ) end, -- Quest: Breaking the Bonds of Fate (COR LB5)
         [1092] = function() return ( toau == mi.toau.LEGACY_OF_THE_LOST                                                                                                    ) end, -- TOAU35: Legacy of the Lost
         [1122] = function() return ( player:getQuestStatus(xi.quest.log_id.AHT_URHGAN,xi.quest.id.ahtUrhgan.OMENS) == QUEST_ACCEPTED and
-                                     player:getCharVar('OmensProgress') == 1                                                                                               ) end, -- Quest: Omens (BLU AF Quest 2)
+                                     xi.quest.getVar(player, xi.quest.log_id.AHT_URHGAN,xi.quest.id.ahtUrhgan.OMENS, 'Prog') == 0                                          ) end, -- Quest: Omens (BLU AF Quest 2)
         [1123] = function() return ( mjob == xi.job.PUP and mlvl >= 66                                                                                                     ) end, -- Quest: Achieving True Power (PUP LB5)
         [1124] = function() return ( toau == mi.toau.SHIELD_OF_DIPLOMACY and toauStat == 2                                                                                 ) end, -- TOAU22: Shield of Diplomacy
         [1154] = function() return ( mjob == xi.job.BLU and mlvl >= 66                                                                                                     ) end, -- Quest: The Beast Within (BLU LB5)
@@ -699,9 +703,10 @@ local function checkReqs(player, npc, bfid, registrant)
         [2721] = function() return ( wotg == mi.wotg.PURPLE_THE_NEW_BLACK and wotgStat == 1                                                                                ) end, -- WOTG07: Purple, The New Black
     }
 
-    -- requirements to enter a battlefield already registered by a party member
+    -- Requirements to enter a battlefield already registered by a party member
     local enterReqs =
     {
+        [ 640] = function() return ( npc:getXPos() > -721 and npc:getXPos() < 719                                                                          ) end, -- PM5-3 U3: Flames for the Dead
         [ 641] = function() return ( player:hasKeyItem(xi.ki.ZEPHYR_FAN)                                                                                   ) end, -- ENM: Follow the White Rabbit
         [ 642] = function() return ( player:hasKeyItem(xi.ki.ZEPHYR_FAN)                                                                                   ) end, -- ENM: When Hell Freezes Over
         [ 643] = function() return ( player:hasKeyItem(xi.ki.ZEPHYR_FAN)                                                                                   ) end, -- ENM: Brothers
@@ -746,11 +751,11 @@ local function checkReqs(player, npc, bfid, registrant)
         [1306] = function() return ( player:hasKeyItem(xi.ki.COSMO_CLEANSE) and player:hasKeyItem(xi.ki.WHITE_CARD)                                        ) end, -- Central Temenos 4th Floor
         [2721] = function() return ( player:hasCompletedMission(xi.mission.log_id.WOTG, mi.wotg.PURPLE_THE_NEW_BLACK)                                      ) end, -- WOTG07: Purple, The New Black
     }
-    -- determine whether player meets battlefield requirements
+
+    -- Determine whether player meets battlefield requirements
     local req = (registrant == true) and registerReqs[bfid] or enterReqs[bfid]
-    if not req then
-        return true
-    elseif req() then
+
+    if not req or req() then
         return true
     else
         return false
@@ -760,16 +765,15 @@ end
 -----------------------------------
 -- check ability to skip a cutscene
 -----------------------------------
-
 local function checkSkip(player, bfid)
     local mi        = xi.mission.id
     local nat       = player:getCurrentMission(player:getNation())
-    local sandy     = player:getCurrentMission(SANDORIA)
-    local basty     = player:getCurrentMission(BASTOK)
-    local windy     = player:getCurrentMission(WINDURST)
+    local sandy     = player:getCurrentMission(xi.mission.log_id.SANDORIA)
+    local basty     = player:getCurrentMission(xi.mission.log_id.BASTOK)
+    local windy     = player:getCurrentMission(xi.mission.log_id.WINDURST)
     -- local roz       = player:getCurrentMission(ZILART)
-    local cop       = player:getCurrentMission(COP)
-    -- local toau      = player:getCurrentMission(TOAU)
+    local cop       = player:getCurrentMission(xi.mission.log_id.COP)
+    -- local toau      = player:getCurrentMission(xi.mission.log_id.TOAU)
     -- local wotg      = player:getCurrentMission(xi.mission.log_id.WOTG)
     -- local asa       = player:getCurrentMission(ASA)
     local natStat   = player:getMissionStatus(player:getNation())
@@ -802,7 +806,7 @@ local function checkSkip(player, bfid)
             basty == mi.bastok.THE_EMISSARY_WINDURST2
         )
 
-    -- requirements to skip a battlefield
+    -- Requirements to skip a battlefield
     local skipReqs =
     {
         [   0] = function() return ( mission2_3a                                                                                                                                                  ) end, -- Mission 2-3
@@ -833,77 +837,86 @@ local function checkSkip(player, bfid)
         [ 544] = function() return ( player:hasCompletedQuest(xi.quest.log_id.OUTLANDS, xi.quest.id.outlands.TRIAL_BY_FIRE) or player:hasKeyItem(xi.ki.WHISPER_OF_FLAMES)                         ) end, -- Quest: Trial by Fire
         [ 576] = function() return ( player:hasCompletedQuest(xi.quest.log_id.BASTOK, xi.quest.id.bastok.TRIAL_BY_EARTH) or player:hasKeyItem(xi.ki.WHISPER_OF_TREMORS)                           ) end, -- Quest: Trial by Earth
         [ 608] = function() return ( player:hasCompletedQuest(xi.quest.log_id.OUTLANDS, xi.quest.id.outlands.TRIAL_BY_WATER) or player:hasKeyItem(xi.ki.WHISPER_OF_TIDES)                         ) end, -- Quest: Trial by Water
-        [ 640] = function() return ( player:hasCompletedMission(xi.mission.log_id.COP, mi.cop.THREE_PATHS) or (cop == mi.cop.THREE_PATHS and player:getCharVar("COP_Ulmia_s_Path") > 6)           ) end, -- PM5-3 U3: Flames for the Dead
-        [ 672] = function() return ( player:hasCompletedMission(xi.mission.log_id.COP, mi.cop.THREE_PATHS) or (cop == mi.cop.THREE_PATHS and player:getCharVar("COP_Ulmia_s_Path") > 5)           ) end, -- PM5-3 U2: Head Wind
+        [ 640] = function() return ( player:hasCompletedMission(xi.mission.log_id.COP, mi.cop.THREE_PATHS) or
+                                     (cop == mi.cop.THREE_PATHS and player:getMissionStatus(xi.mission.log_id.COP, xi.mission.status.COP.ULMIA) > 8)                                              ) end, -- PM5-3 U3: Flames for the Dead
+        [ 672] = function() return ( player:hasCompletedMission(xi.mission.log_id.COP, mi.cop.THREE_PATHS) or
+                                     (cop == mi.cop.THREE_PATHS and player:getMissionStatus(xi.mission.log_id.COP, xi.mission.status.COP.ULMIA) > 7)                                              ) end, -- PM5-3 U2: Head Wind
         [ 704] = function() return ( player:hasCompletedMission(xi.mission.log_id.COP, mi.cop.DARKNESS_NAMED) or (cop == mi.cop.DARKNESS_NAMED and copStat > 2)                                   ) end, -- PM3-5: Darkness Named
         [ 706] = function() return ( player:hasCompletedQuest(xi.quest.log_id.WINDURST, xi.quest.id.windurst.WAKING_DREAMS) or player:hasKeyItem(xi.ki.WHISPER_OF_DREAMS)                         ) end, -- Quest: Waking Dreams
-        [ 736] = function() return ( player:hasCompletedMission(xi.mission.log_id.COP, mi.cop.THREE_PATHS) or (cop == mi.cop.THREE_PATHS and player:getCharVar("COP_Louverance_s_Path") > 5)      ) end, -- PM5-3 L3: A Century of Hardship
+        [ 736] = function() return ( player:hasCompletedMission(xi.mission.log_id.COP, mi.cop.THREE_PATHS) or (cop == mi.cop.THREE_PATHS and
+                                     player:getMissionStatus(xi.mission.log_id.COP, xi.mission.status.COP.LOUVERANCE) > 8)                                                                        ) end, -- PM5-3 L3: A Century of Hardship
         [ 768] = function() return ( player:hasCompletedMission(xi.mission.log_id.COP, mi.cop.THE_MOTHERCRYSTALS) or player:hasKeyItem(xi.ki.LIGHT_OF_HOLLA)                                      ) end, -- PM1-3: The Mothercrystals
         [ 800] = function() return ( player:hasCompletedMission(xi.mission.log_id.COP, mi.cop.THE_MOTHERCRYSTALS) or player:hasKeyItem(xi.ki.LIGHT_OF_DEM)                                        ) end, -- PM1-3: The Mothercrystals
         [ 832] = function() return ( player:hasCompletedMission(xi.mission.log_id.COP, mi.cop.THE_MOTHERCRYSTALS) or player:hasKeyItem(xi.ki.LIGHT_OF_MEA)                                        ) end, -- PM1-3: The Mothercrystals
-        [ 864] = function() return ( player:hasCompletedMission(xi.mission.log_id.COP, mi.cop.DESIRES_OF_EMPTINESS) or (cop == mi.cop.DESIRES_OF_EMPTINESS and copStat > 8)                       ) end, -- PM5-2: Desires of Emptiness
+        [ 864] = function() return ( player:hasCompletedMission(xi.mission.log_id.COP, mi.cop.DESIRES_OF_EMPTINESS) or (cop == mi.cop.DESIRES_OF_EMPTINESS and
+                                     player:getCharVar('Mission[6][518]Status') > 2)                                                                                                              ) end, -- PM5-2: Desires of Emptiness
         [ 896] = function() return ( sofStat == QUEST_COMPLETED or (sofStat == QUEST_ACCEPTED and player:getCharVar("StormsOfFate") > 2)                                                          ) end, -- Quest: Storms of Fate
         [ 960] = function() return ( player:hasCompletedMission(xi.mission.log_id.COP, mi.cop.ANCIENT_VOWS)                                                                                       ) end, -- PM2-5: Ancient Vows
-        [ 961] = function() return ( player:hasCompletedMission(xi.mission.log_id.COP, mi.cop.THE_SAVAGE) or (cop == mi.cop.THE_SAVAGE and copStat > 1)                                           ) end, -- PM4-2: The Savage
-        [ 992] = function() return ( player:hasCompletedMission(xi.mission.log_id.COP, mi.cop.ONE_TO_BE_FEARED)                                                                                   ) end, -- PM6-4: One to be Feared
-        [ 993] = function() return ( player:hasCompletedMission(xi.mission.log_id.COP, mi.cop.THE_WARRIOR_S_PATH)                                                                                 ) end, -- PM7-5: The Warrior's Path
+        [ 961] = function() return ( player:hasCompletedMission(xi.mission.log_id.COP, mi.cop.THE_SAVAGE) or (cop == mi.cop.THE_SAVAGE and player:getCharVar('Mission[6][418]Status') > 1)        ) end, -- PM4-2: The Savage
+        [ 993] = function() return ( player:hasCompletedMission(xi.mission.log_id.COP, mi.cop.THE_WARRIORS_PATH)                                                                                  ) end, -- PM7-5: The Warrior's Path
         [1024] = function() return ( player:hasCompletedMission(xi.mission.log_id.COP, mi.cop.WHEN_ANGELS_FALL) or (cop == mi.cop.WHEN_ANGELS_FALL and copStat > 4)                               ) end, -- PM8-3: When Angels Fall
         [1056] = function() return ( player:hasCompletedMission(xi.mission.log_id.COP, mi.cop.DAWN) or (cop == mi.cop.DAWN and copStat > 2)                                                       ) end, -- PM8-4: Dawn
         [1057] = function() return ( player:hasCompletedQuest(xi.quest.log_id.JEUNO, xi.quest.id.jeuno.APOCALYPSE_NIGH)                                                                           ) end, -- Apocalypse Nigh
         [2721] = function() return ( player:hasCompletedMission(xi.mission.log_id.WOTG, mi.wotg.PURPLE_THE_NEW_BLACK)                                                                             ) end, -- WOTG07: Purple, The New Black
     }
 
-    -- determine whether player meets cutscene skip requirements
+    -- Determine whether player meets cutscene skip requirements
     local req = skipReqs[bfid]
+
     if not req then
         return false
     elseif req() then
         return true
     end
+
     return false
 end
 
 -----------------------------------
--- which battlefields are valid for registrant?
+-- Which battlefields are valid for registrant?
 -----------------------------------
-
 local function findBattlefields(player, npc, itemId)
     local mask = 0
     local zbfs = battlefields[player:getZoneID()]
+
     if zbfs == nil then
         return 0
     end
+
     for k, v in pairs(zbfs) do
         if v[3] == itemId and checkReqs(player, npc, v[2], true) and not player:battlefieldAtCapacity(v[2]) then
             mask = bit.bor(mask, math.pow(2, v[1]))
         end
     end
+
     return mask
 end
 
 -----------------------------------
--- get battlefield id for a given zone and bit
+-- Get battlefield id for a given zone and bit
 -----------------------------------
-
 local function getBattlefieldIdByBit(player, bit)
     local zbfs = battlefields[player:getZoneID()]
+
     if not zbfs then
         return 0
     end
+
     for k, v in pairs(zbfs) do
         if v[1] == bit then
             return v[2]
         end
     end
+
     return 0
 end
 
 -----------------------------------
--- get battlefield bit for a given zone and id
+-- Get battlefield bit for a given zone and id
 -----------------------------------
-
 local function getBattlefieldMaskById(player, bfid)
     local zbfs = battlefields[player:getZoneID()]
+
     if zbfs then
         for k, v in pairs(zbfs) do
             if v[2] == bfid then
@@ -911,15 +924,16 @@ local function getBattlefieldMaskById(player, bfid)
             end
         end
     end
+
     return 0
 end
 
 -----------------------------------
--- get battlefield bit for a given zone and id
+-- Get battlefield bit for a given zone and id
 -----------------------------------
-
 local function getItemById(player, bfid)
     local zbfs = battlefields[player:getZoneID()]
+
     if zbfs then
         for k, v in pairs(zbfs) do
             if v[2] == bfid then
@@ -927,44 +941,90 @@ local function getItemById(player, bfid)
             end
         end
     end
+
     return 0
 end
 
+local function rejectLevelSyncedParty(player, npc)
+    for _, member in pairs(player:getAlliance()) do
+        if member:isLevelSync() then
+            local zoneId = player:getZoneID()
+            local ID = zones[zoneId]
+            -- Your party is unable to participate because certain members' levels are restricted
+            player:messageText(npc, ID.text.MEMBERS_LEVELS_ARE_RESTRICTED, false)
+            return true
+        end
+    end
+    return false
+end
 -----------------------------------
 -- onTrade Action
 -----------------------------------
 
-function TradeBCNM(player, npc, trade, onUpdate)
-    -- validate trade
+xi.bcnm.onTrade = function(player, npc, trade, onUpdate)
+    if rejectLevelSyncedParty(player, npc) then -- player's party has level sync, abort.
+        return false
+    end
+
+    -- Validate trade
     local itemId
+
     if not trade then
         return false
+
+    -- Chips for limbus
     elseif trade:getItemCount() == 3 and trade:hasItemQty(1907, 1) and trade:hasItemQty(1908, 1) and trade:hasItemQty(1986, 1) then
         itemId = -1
+
+    -- Chips for limbus
     elseif trade:getItemCount() == 4 and trade:hasItemQty(1909, 1) and trade:hasItemQty(1910, 1) and trade:hasItemQty(1987, 1) and trade:hasItemQty(1988, 1) then
         itemId = -2
+
+    -- Orbs / Testimonies
     else
         itemId = trade:getItemId(0)
-        if itemId == nil or itemId < 1 or itemId > 65535 or trade:getItemCount() ~= 1 or trade:getSlotQty(0) ~= 1 then
+
+        if
+            itemId == nil or
+            itemId < 1 or
+            itemId > 65535 or
+            trade:getItemCount() ~= 1 or
+            trade:getSlotQty(0) ~= 1
+        then
             return false
+
+        -- Check for already used Orb or testimony.
         elseif player:hasWornItem(itemId) then
             player:messageBasic(xi.msg.basic.ITEM_UNABLE_TO_USE_2, 0, 0) -- Unable to use item.
             return false
         end
     end
 
-    -- validate battlefield status
+    -- Validate battlefield status
     if player:hasStatusEffect(xi.effect.BATTLEFIELD) and not onUpdate then
         player:messageBasic(xi.msg.basic.WAIT_LONGER, 0, 0) -- You must wait longer to perform that action.
+
         return false
     end
 
-    -- open menu of valid battlefields
+    -- Check if another party member has battlefield status effect. If so, don't allow trade.
+    local alliance = player:getAlliance()
+    for _, member in pairs(alliance) do
+        if member:hasStatusEffect(xi.effect.BATTLEFIELD) then
+            player:messageBasic(xi.msg.basic.WAIT_LONGER, 0, 0) -- You must wait longer to perform that action.
+
+            return false
+        end
+    end
+
+    -- Open menu of valid battlefields
     local validBattlefields = findBattlefields(player, npc, itemId)
+
     if validBattlefields ~= 0 then
         if not onUpdate then
             player:startEvent(32000, 0, 0, 0, validBattlefields, 0, 0, 0, 0)
         end
+
         return true
     end
 
@@ -974,15 +1034,46 @@ end
 -----------------------------------
 -- onTrigger Action
 -----------------------------------
+xi.bcnm.onTrigger = function(player, npc)
+    -- Cannot enter if anyone in party is level/master sync'd
+    if rejectLevelSyncedParty(player, npc) then
+        return false
+    end
 
-function EventTriggerBCNM(player, npc)
-    -- player is in battlefield and clicks to leave
-    if player:getBattlefield() then
-        player:startEvent(32003)
-        return true
+    -- Player has battlefield status effect. That means a battlefield is open OR the player is inside a battlefield.
+    if player:hasStatusEffect(xi.effect.BATTLEFIELD) then
+        -- Player is inside battlefield. Attempting to leave.
+        if player:getBattlefield() then
+            player:startOptionalCutscene(32003)
 
-    -- player wants to register a new battlefield
-    elseif not player:hasStatusEffect(xi.effect.BATTLEFIELD) then
+            return true
+
+        -- Player is outside battlefield. Attempting to enter.
+        else
+            local stat = player:getStatusEffect(xi.effect.BATTLEFIELD)
+            local bfid = stat:getPower()
+            local mask = getBattlefieldMaskById(player, bfid)
+
+            if mask ~= 0 and checkReqs(player, npc, bfid, false) then
+                player:startEvent(32000, 0, 0, 0, mask, 0, 0, 0, 0)
+
+                return true
+            end
+        end
+
+    -- Player doesn't have battlefield status effect. That means player wants to register a new battlefield OR is attempting to enter a closed one.
+    else
+        -- Check if another party member has battlefield status effect. If so, that means the player is trying to enter a closed battlefield.
+        local alliance = player:getAlliance()
+        for _, member in pairs(alliance) do
+            if member:hasStatusEffect(xi.effect.BATTLEFIELD) then
+                -- player:messageSpecial() -- You are eligible but cannot enter.
+
+                return false
+            end
+        end
+
+        -- No one in party/alliance has battlefield status effect. We want to register a new battlefield.
         local mask = findBattlefields(player, npc, 0)
 
         -- GMs get access to all BCNMs
@@ -995,17 +1086,6 @@ function EventTriggerBCNM(player, npc)
             player:startEvent(32000, 0, 0, 0, mask, 0, 0, 0, 0)
             return true
         end
-
-    -- player is allied with a registrant and wants to enter their instance
-    else
-        local stat = player:getStatusEffect(xi.effect.BATTLEFIELD)
-        local bfid = stat:getPower()
-        local mask = getBattlefieldMaskById(player, bfid)
-        if mask ~= 0 and checkReqs(player, npc, bfid, false) then
-            player:startEvent(32000, 0, 0, 0, mask, 0, 0, 0, 0)
-            return true
-        end
-
     end
 
     return false
@@ -1014,11 +1094,10 @@ end
 -----------------------------------
 -- onEventUpdate
 -----------------------------------
-
-function EventUpdateBCNM(player, csid, option, extras)
+xi.bcnm.onEventUpdate = function(player, csid, option, extras)
     -- player:PrintToPlayer(string.format("EventUpdateBCNM csid=%i option=%i extras=%i", csid, option, extras))
 
-    -- requesting a battlefield
+    -- Requesting a battlefield
     if csid == 32000 then
         if option == 0 then
             -- todo: check if battlefields full, check party member requiremenst
@@ -1027,16 +1106,19 @@ function EventUpdateBCNM(player, csid, option, extras)
             -- todo: check if battlefields full, check party member requirements
             return 0
         end
+
         local area = player:getLocalVar("[battlefield]area")
-        area = area + 1
+        area       = area + 1
+
         local battlefieldIndex = bit.rshift(option, 4)
-        local battlefieldId = getBattlefieldIdByBit(player, battlefieldIndex)
-        local id = battlefieldId or player:getBattlefieldID()
-        local skip = checkSkip(player, id)
+        local battlefieldId    = getBattlefieldIdByBit(player, battlefieldIndex)
+        local id               = battlefieldId or player:getBattlefieldID()
+        local skip             = checkSkip(player, id)
 
         local clearTime = 1
-        local name = "Meme"
+        local name      = "Meme"
         local partySize = 1
+
         switch (battlefieldId): caseof
         {
             [1290] = function() area = 2 end, -- NW_Apollyon
@@ -1054,9 +1136,11 @@ function EventUpdateBCNM(player, csid, option, extras)
             [1305] = function() area = 5 end, -- Central_Temenos_3rd_Floor
             [1306] = function() area = 4 end, -- Central_Temenos_4th_Floor
         }
+
         local result = xi.battlefield.returnCode.REQS_NOT_MET
-        result = player:registerBattlefield(id, area)
+        result       = player:registerBattlefield(id, area)
         local status = xi.battlefield.status.OPEN
+
         if result ~= xi.battlefield.returnCode.CUTSCENE then
             if result == xi.battlefield.returnCode.INCREMENT_REQUEST then
                 if area < 3 then
@@ -1066,52 +1150,67 @@ function EventUpdateBCNM(player, csid, option, extras)
                     player:updateEvent(result)
                 end
             end
+
             return false
         else
-            if not player:getBattlefield() then
+            -- Only allow entrance if battlefield is open and playerhas battlefield effect, witch can be lost mid battlefield selection.
+            if
+                not player:getBattlefield() and
+                player:hasStatusEffect(xi.effect.BATTLEFIELD)
+                -- and id:getStatus() == xi.battlefield.status.OPEN -- TODO: Uncomment only once that can-of-worms is dealt with.
+            then
                 player:enterBattlefield()
             end
-            local initiatorId = 0
-            local initiatorName = ""
 
-            local battlefield = player:getBattlefield()
+            -- Handle record
+            local initiatorId   = 0
+            local initiatorName = ""
+            local battlefield   = player:getBattlefield()
+
             if battlefield then
                 battlefield:setLocalVar("[cs]bit", battlefieldIndex)
                 name, clearTime, partySize = battlefield:getRecord()
                 initiatorId, initiatorName = battlefield:getInitiator()
             end
 
-            -- register party members
+            -- Register party members
             if initiatorId == player:getID() then
                 local effect = player:getStatusEffect(xi.effect.BATTLEFIELD)
-                local zone = player:getZoneID()
-                local item = getItemById(player, effect:getPower())
+                local zone   = player:getZoneID()
+                local item   = getItemById(player, effect:getPower())
 
+                -- Handle traded items
                 if item ~= 0 then
-                    -- remove limbus chips
+                    -- Remove limbus chips
                     if zone == 37 or zone == 38 then
                         player:tradeComplete()
 
-                    -- set other traded item to worn
+                    -- Set other traded item to worn
                     elseif player:hasItem(item) and player:getName() == initiatorName then
                         player:createWornItem(item)
                     end
                 end
 
+                -- Handle party/alliance members
                 local alliance = player:getAlliance()
                 for _, member in pairs(alliance) do
-                    if member:getZoneID() == zone and not member:hasStatusEffect(xi.effect.BATTLEFIELD) and not member:getBattlefield() then
+                    if
+                        member:getZoneID() == zone and
+                        not member:hasStatusEffect(xi.effect.BATTLEFIELD) and
+                        not member:getBattlefield()
+                    then
                         member:addStatusEffect(effect)
                         member:registerBattlefield(id, area, player:getID())
                     end
                 end
             end
         end
+
         player:updateEvent(result, battlefieldIndex, 0, clearTime, partySize, skip)
         player:updateEventString(name)
         return status < xi.battlefield.status.LOCKED and result < xi.battlefield.returnCode.LOCKED
 
-    -- leaving a battlefield
+    -- Leaving a battlefield
     elseif csid == 32003 and option == 2 then
         player:updateEvent(3)
         return true
@@ -1127,16 +1226,19 @@ end
 -- onEventFinish Action
 -----------------------------------
 
-function EventFinishBCNM(player, csid, option)
+xi.bcnm.onEventFinish = function(player, csid, option)
     -- player:PrintToPlayer(string.format("EventFinishBCNM csid=%i option=%i", csid, option))
     player:setLocalVar("[battlefield]area", 0)
+
     if player:hasStatusEffect(xi.effect.BATTLEFIELD) then
         if csid == 32003 and option == 4 then
             if player:getBattlefield() then
                 player:leaveBattlefield(1)
             end
         end
+
         return true
     end
+
     return false
 end

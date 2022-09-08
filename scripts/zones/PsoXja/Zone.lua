@@ -1,14 +1,12 @@
 -----------------------------------
---
 -- Zone: PsoXja (9)
---
 -----------------------------------
-local ID = require("scripts/zones/PsoXja/IDs")
-require("scripts/globals/conquest")
-require("scripts/globals/missions")
-require("scripts/settings/main")
-require("scripts/globals/treasure")
-require("scripts/globals/status")
+local ID = require('scripts/zones/PsoXja/IDs')
+require('scripts/globals/conquest')
+require('scripts/globals/missions')
+require('scripts/globals/settings')
+require('scripts/globals/treasure')
+require('scripts/globals/status')
 -----------------------------------
 local zone_object = {}
 
@@ -30,14 +28,8 @@ end
 zone_object.onZoneIn = function(player, prevZone)
     local cs = -1
 
-    if (player:getXPos() == 0 and player:getYPos() == 0 and player:getZPos() == 0) then
+    if player:getXPos() == 0 and player:getYPos() == 0 and player:getZPos() == 0 then
         player:setPos(-29.956, -1.903, 212.521, 188)
-    end
-
-    if (player:getXPos() == -300 and player:getCurrentMission(COP) == xi.mission.id.cop.THE_ENDURING_TUMULT_OF_WAR and player:getCharVar("PromathiaStatus") == 2) then
-        cs = 1 -- COP event
-    elseif (player:getXPos() == 220 and player:getCurrentMission(COP) == xi.mission.id.cop.THREE_PATHS and player:getCharVar("COP_Tenzen_s_Path") == 8) then
-        cs = 4
     end
 
     return cs
@@ -63,10 +55,11 @@ zone_object.afterZoneIn = function(player)
     player:entityVisualPacket("s123")
 
     -- ZONE WIDE LEVEL RESTRICTION
-    if (xi.settings.ENABLE_COP_ZONE_CAP == 1) then
-        local LVLcap = player:getCharVar("PSOXJA_RESTRICTION_LVL")
-        if (LVLcap > 0) then -- LV cap depends on entrance
-            player:addStatusEffect(xi.effect.LEVEL_RESTRICTION, LVLcap, 0, 0)
+    if xi.settings.main.ENABLE_COP_ZONE_CAP == 1 then
+        local lvlCap = player:getCharVar("PSOXJA_RESTRICTION_LVL")
+
+        if lvlCap > 0 then -- LV cap depends on entrance
+            player:addStatusEffect(xi.effect.LEVEL_RESTRICTION, lvlCap, 0, 0)
         end
     end
 end
@@ -82,21 +75,17 @@ zone_object.onEventUpdate = function(player, csid, option)
 end
 
 zone_object.onEventFinish = function(player, csid, option)
-    if (csid == 1) then
-        player:setCharVar("PromathiaStatus", 3)
-    elseif (csid == 4) then
-        player:setCharVar("COP_Tenzen_s_Path", 9)
-    elseif (csid == 20 and option == 1) then
+    if csid == 20 and option == 1 then
         player:setPos(-20, -60.250, -60, 63, 111)
-    elseif (csid == 21 and option == 1) then
+    elseif csid == 21 and option == 1 then
         player:setPos(260, -0.25, -20, 254, 111)
-    elseif (csid == 22 and option == 1) then
+    elseif csid == 22 and option == 1 then
         player:setPos(60, -0.250, -340.000, 190, 111)
-    elseif (csid == 23 and option == 1) then
+    elseif csid == 23 and option == 1 then
         player:setPos(-340, -100.250, 140, 63, 111)
-    elseif (csid == 24 and option == 1) then
+    elseif csid == 24 and option == 1 then
         player:setPos(-180, -40.25 , -220, 0, 111)
-    elseif (csid == 25 and option == 1) then
+    elseif csid == 25 and option == 1 then
         player:setPos(100, -20.25, 140, 64, 111)
     end
 end

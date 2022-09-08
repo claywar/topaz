@@ -5,7 +5,6 @@
 -----------------------------------
 local ID = require("scripts/zones/Nyzul_Isle/IDs")
 require("scripts/globals/keyitems")
-require("scripts/settings/main")
 require("scripts/globals/status")
 require("scripts/globals/nyzul")
 require("scripts/globals/utils")
@@ -60,7 +59,7 @@ entity.onEventFinish = function(player, csid, option, npc)
         -- Leave Assault
         if option == 1 and npc:getLocalVar("runCompleted") == 0 then
             npc:setLocalVar("runCompleted", 1)
-            local currentFloor = utils.clamp(xi.nyzul.get_relative_floor(instance), 1, 100)
+            local currentFloor = utils.clamp(xi.nyzul.getRelativeFloor(instance), 1, 100)
             local startFloor   = instance:getLocalVar("Nyzul_Isle_StartingFloor")
             local diskHolder   = instance:getLocalVar("diskHolder")
 
@@ -85,7 +84,7 @@ entity.onEventFinish = function(player, csid, option, npc)
                     end
                 end
 
-                local tokens = math.max(0, instance:getLocalVar("potential_tokens") - xi.nyzul.get_token_penalty(instance))
+                local tokens = math.max(0, instance:getLocalVar("potential_tokens") - xi.nyzul.getTokenPenalty(instance))
 
                 -- Assault initiator gets 10% more tokens
                 if players:getID() == instance:getLocalVar("assaultInitiator") then

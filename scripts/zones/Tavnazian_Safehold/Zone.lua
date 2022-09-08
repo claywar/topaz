@@ -1,10 +1,8 @@
 -----------------------------------
 -- Zone: Tavnazian_Safehold (26)
 -----------------------------------
-local ID = require("scripts/zones/Tavnazian_Safehold/IDs")
-require("scripts/globals/conquest")
-require("scripts/settings/main")
-require("scripts/globals/missions")
+local ID = require('scripts/zones/Tavnazian_Safehold/IDs')
+require('scripts/globals/conquest')
 -----------------------------------
 local zone_object = {}
 
@@ -26,24 +24,10 @@ zone_object.onZoneIn = function(player, prevZone)
         player:setPos(27.971, -14.068, 43.735, 66)
     end
 
-    if player:getCurrentMission(COP) == xi.mission.id.cop.SHELTERING_DOUBT and player:getCharVar("PromathiaStatus") == 0 then
-        cs = 107
-    elseif player:getCurrentMission(COP) == xi.mission.id.cop.CHAINS_AND_BONDS and player:getCharVar("PromathiaStatus") == 1 then
-        cs = 114
-    end
-
     return cs
 end
 
 zone_object.onRegionEnter = function(player, region)
-    switch (region:GetRegionID()): caseof
-    {
-        [2] = function (x)
-            if player:getCurrentMission(COP) == xi.mission.id.cop.SLANDEROUS_UTTERINGS and player:getCharVar("PromathiaStatus") == 0 then
-                player:startEvent(112)
-            end
-        end,
-    }
 end
 
 zone_object.onRegionLeave = function(player, region)
@@ -53,13 +37,6 @@ zone_object.onEventUpdate = function(player, csid, option)
 end
 
 zone_object.onEventFinish = function(player, csid, option)
-    if csid == 107 then
-        player:setCharVar("PromathiaStatus", 1)
-    elseif csid == 112 then
-        player:setCharVar("PromathiaStatus", 1)
-    elseif csid == 114 then
-        player:setCharVar("PromathiaStatus", 2)
-    end
 end
 
 return zone_object

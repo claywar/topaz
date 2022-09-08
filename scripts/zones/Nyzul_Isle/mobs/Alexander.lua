@@ -2,8 +2,8 @@
 -- Area: Nyzul Isle (Nashmeira's Plea)
 --  Mob: Alexander
 -----------------------------------
-local ID = require("scripts/zones/Nyzul_Isle/IDs")
-require("scripts/globals/status")
+local ID = require('scripts/zones/Nyzul_Isle/IDs')
+require('scripts/globals/status')
 -----------------------------------
 local entity = {}
 

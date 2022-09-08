@@ -2,8 +2,8 @@
 --  MOB: Black Pudding
 -- Area: Nyzul Isle
 -----------------------------------
-mixins = {require("scripts/mixins/families/flan")}
-require("scripts/globals/nyzul")
+mixins = { require('scripts/mixins/families/flan') }
+require('scripts/globals/nyzul')
 -----------------------------------
 local entity = {}
 

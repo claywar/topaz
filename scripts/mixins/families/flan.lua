@@ -8,7 +8,6 @@ g_mixins.families.flan = function(flanMob)
         local accumulatedPhisical = mob:getLocalVar("physical")
         local accumulatedMagical  = mob:getLocalVar("magical")
 
-
         if attackType == xi.attackType.PHYSICAL or attackType == xi.attackType.RANGED then
             accumulatedPhisical = accumulatedPhisical + damage
 

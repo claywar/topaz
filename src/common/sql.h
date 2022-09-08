@@ -79,6 +79,7 @@ public:
     /// Establishes a connection.
     ///
     /// @return SQL_SUCCESS or SQL_ERROR
+    SqlConnection();
     SqlConnection(const char* user, const char* passwd, const char* host, uint16 port, const char* db);
     ~SqlConnection();
 
@@ -167,7 +168,10 @@ public:
     int8*  GetData(size_t col);
     int32  GetIntData(size_t col);
     uint32 GetUIntData(size_t col);
+    uint64 GetUInt64Data(size_t col);
     float  GetFloatData(size_t col);
+
+    std::string GetStringData(size_t col);
 
     /// Frees the result of the query.
     void FreeResult();
@@ -180,6 +184,18 @@ public:
     bool TransactionRollback();
 
     std::shared_ptr<SqlPreparedStatement> GetPreparedStatement(std::string const& name);
+
+    // NOTE: You need to be very careful of the lifetime you pass into these std::functions.
+    //     : You should capture by value and be very careful of capturing pointers.
+    //     : `const char*` is a pointer! If you need to pass that in, construct a std::string
+    //     : and capture that by value!
+    void Async(std::function<void(SqlConnection*)>&& func);
+    void Async(std::string const& query);
+
+    void HandleAsync();
+
+    void SetLatencyWarning(bool _LatencyWarning);
+
 private:
     Sql_t*      self;
     const char* m_User;
@@ -190,8 +206,10 @@ private:
 
     uint32 m_PingInterval;
     uint32 m_LastPing;
+    bool   m_LatencyWarning;
 
     void InitPreparedStatements();
+
     std::unordered_map<std::string, std::shared_ptr<SqlPreparedStatement>> m_PreparedStatements;
 };
 #endif // _COMMON_SQL_H

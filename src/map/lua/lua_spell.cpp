@@ -19,16 +19,16 @@
 ===========================================================================
 */
 
-#include "../../common/logging.h"
+#include "common/logging.h"
 
 #include "../spell.h"
 #include "../utils/battleutils.h"
 #include "lua_spell.h"
 
 /************************************************************************
- *																		*
- *  Constructor															*
- *																		*
+ *                                                                        *
+ *  Constructor                                                            *
+ *                                                                        *
  ************************************************************************/
 
 CLuaSpell::CLuaSpell(CSpell* PSpell)
@@ -123,7 +123,7 @@ uint16 CLuaSpell::getID()
 
 uint16 CLuaSpell::getMPCost()
 {
-    return static_cast<uint16>(m_PLuaSpell->getMPCost());
+    return m_PLuaSpell->getMPCost();
 }
 
 uint8 CLuaSpell::getSkillType()

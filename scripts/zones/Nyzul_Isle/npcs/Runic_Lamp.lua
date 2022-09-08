@@ -4,21 +4,20 @@
 -- animition sub 1 == glow
 -----------------------------------
 local ID = require("scripts/zones/Nyzul_Isle/IDs")
-require("scripts/settings/main")
 require("scripts/globals/status")
 require("scripts/globals/nyzul")
 -----------------------------------
 local entity = {}
 
 entity.onTrigger = function(player, npc)
-    local instance     = npc:getInstance()
-    local OBJECTIVE    = instance:getLocalVar("[Lamps]Objective")
-    local lampRegister = instance:getLocalVar("[Lamps]lampRegister")
-    local lampOrder    = npc:getLocalVar("[Lamp]order")
-    local wait         = npc:getLocalVar("[Lamp]Wait") - os.time()
+    local instance      = npc:getInstance()
+    local lampObjective = instance:getLocalVar("[Lamps]Objective")
+    local lampRegister  = instance:getLocalVar("[Lamps]lampRegister")
+    local lampOrder     = npc:getLocalVar("[Lamp]order")
+    local wait          = npc:getLocalVar("[Lamp]Wait") - os.time()
 
     -- Type 1 in Nyzul.lua global
-    if OBJECTIVE == xi.nyzul.lampsObjective.REGISTER then -- 1 lamp spawns and everyone must touch
+    if lampObjective == xi.nyzul.lampsObjective.REGISTER then -- 1 lamp spawns and everyone must touch
         if player:getLocalVar("Register") == 0 then
             player:setLocalVar("Register", 1)
             player:messageSpecial(ID.text.LAMP_CERTIFICATION_REGISTERED)
@@ -33,7 +32,7 @@ entity.onTrigger = function(player, npc)
         end
 
     -- Type 2 in Nyzul.lua global
-    elseif OBJECTIVE == xi.nyzul.lampsObjective.ACTIVATE_ALL then
+    elseif lampObjective == xi.nyzul.lampsObjective.ACTIVATE_ALL then
         if npc:getAnimationSub() ~= 1 and wait <= 0 then
             player:messageSpecial(ID.text.LAMP_SAME_TIME)
             player:startOptionalCutscene(3, {[0] = 5, cs_option = {1, 2}})
@@ -44,7 +43,7 @@ entity.onTrigger = function(player, npc)
         end
 
     -- Type 3 in Nyzul.lua global
-    elseif OBJECTIVE == xi.nyzul.lampsObjective.ORDER then
+    elseif lampObjective == xi.nyzul.lampsObjective.ORDER then
         if bit.band(lampRegister, bit.lshift(1,lampOrder)) == 0 then
             player:messageSpecial(ID.text.LAMP_ORDER)
             player:startOptionalCutscene(3, {[0] = 6, cs_option = {1, 2}})
@@ -62,17 +61,17 @@ entity.onEventUpdate = function(player, csid, option)
 end
 
 entity.onEventFinish = function(player, csid, option, npc)
-    local instance     = npc:getInstance()
-    local OBJECTIVE    = instance:getLocalVar("[Lamps]Objective")
-    local lampCount    = instance:getLocalVar("[Lamp]count") +1
-    local pressCount   = instance:getLocalVar("[Lamp]pressCount")
-    local lampOrder    = npc:getLocalVar("[Lamp]order")
-    local lampRegister = instance:getLocalVar("[Lamps]lampRegister")
-    local winCondition = false
+    local instance      = npc:getInstance()
+    local lampObjective = instance:getLocalVar("[Lamps]Objective")
+    local lampCount     = instance:getLocalVar("[Lamp]count") +1
+    local pressCount    = instance:getLocalVar("[Lamp]pressCount")
+    local lampOrder     = npc:getLocalVar("[Lamp]order")
+    local lampRegister  = instance:getLocalVar("[Lamps]lampRegister")
+    local winCondition  = false
 
     -- TODO: Change this comment with what is option 1
     if csid == 3 and option == 1 then
-        if OBJECTIVE == xi.nyzul.lampsObjective.ACTIVATE_ALL then
+        if lampObjective == xi.nyzul.lampsObjective.ACTIVATE_ALL then
             npc:setAnimationSub(1)
             npc:timer(xi.settings.ACTIVATE_LAMP_TIME, function(lamp) lamp:setAnimationSub(0) lamp:setLocalVar("[Lamp]Wait", os.time() + 30) end)
 
@@ -95,7 +94,7 @@ entity.onEventFinish = function(player, csid, option, npc)
 
     -- TODO: Change this comment with what is option 2
     elseif csid == 3 and option == 2 then
-        if OBJECTIVE == xi.nyzul.lampsObjective.ORDER then
+        if lampObjective == xi.nyzul.lampsObjective.ORDER then
             print("registering lamp, register: "..instance:getLocalVar("[Lamps]lampRegister"))
             lampRegister = lampRegister + bit.lshift(1, lampOrder)
             instance:setLocalVar("[Lamps]lampRegister", lampRegister)

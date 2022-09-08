@@ -25,11 +25,11 @@ The NavMesh class will load and find paths given a start point and end point.
 #ifndef _NAVMESH_H
 #define _NAVMESH_H
 
-#include "../../ext/detour/detour/DetourNavMesh.h"
-#include "../../ext/detour/detour/DetourNavMeshQuery.h"
+#include <detour/DetourNavMesh.h>
+#include <detour/DetourNavMeshQuery.h>
 
-#include "../common/mmo.h"
-#include "../common/logging.h"
+#include "common/logging.h"
+#include "common/mmo.h"
 
 #include <memory>
 #include <vector>
@@ -68,7 +68,7 @@ public:
     CNavMesh(uint16 zoneID);
     ~CNavMesh();
 
-    bool load(const std::string& path);
+    bool load(std::string const& path);
     void reload();
     void unload();
 
@@ -86,9 +86,15 @@ public:
     bool raycast(const position_t& start, const position_t& end, bool lookOffMesh);
 
     bool validPosition(const position_t& position);
+    bool findClosestValidPoint(const position_t& position, float* validPoint);
+    bool findFurthestValidPoint(const position_t& startPosition, const position_t& endPosition, float* validPoint);
+
+    // Like validPosition(), but will also set the given position to the valid position that it finds.
+    void snapToValidPosition(position_t& position);
 
 private:
     void outputError(uint32 status);
+    bool onSameFloor(const position_t& start, float* spos, const position_t& end, float* epos, dtQueryFilter& filter);
 
     std::string                filename;
     uint16                     m_zoneID;

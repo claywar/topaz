@@ -2,19 +2,16 @@
 -- Area: Nyzul Isle (Nashmeira's Plea)
 --  Mob: Razfahd
 -----------------------------------
-require("scripts/zones/Nyzul_Isle/IDs")
-require("scripts/globals/status")
+require('scripts/zones/Nyzul_Isle/IDs')
+require('scripts/globals/status')
 -----------------------------------
 local entity = {}
-
-entity.onMobInitialize = function(mob)
-    mob:setMobMod(xi.mobMod.NO_MOVE, 1)
-end
 
 entity.onMobSpawn = function(mob)
     -- Wiki is wrong, he CAN melee: https://youtu.be/5ko8xHiHvYo?t=14m31s
     -- mob:SetAutoAttackEnabled(false)
     mob:setUnkillable(true)
+    mob:setMobMod(xi.mobMod.NO_MOVE, 1)
 end
 
 entity.onMobFight = function(mob, target)

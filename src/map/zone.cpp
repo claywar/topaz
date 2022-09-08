@@ -69,28 +69,16 @@
 #include "utils/charutils.h"
 #include "utils/itemutils.h"
 #include "utils/mobutils.h"
+#include "utils/moduleutils.h"
 #include "utils/petutils.h"
 #include "utils/zoneutils.h"
 
-/************************************************************************
- *                                                                       *
- *  Cервер для обработки активности сущностей (по серверу на зону) без   *
- *  активных областей                                                    *
- *                                                                       *
- ************************************************************************/
-
 int32 zone_server(time_point tick, CTaskMgr::CTask* PTask)
 {
-    std::any_cast<CZone*>(PTask->m_data)->ZoneServer(tick, false);
+    CZone* PZone = std::any_cast<CZone*>(PTask->m_data);
+    PZone->ZoneServer(tick, false);
     return 0;
 }
-
-/************************************************************************
- *                                                                       *
- *  Cервер для обработки активности сущностей (по серверу на зону) c     *
- *  активными областями                                                  *
- *                                                                       *
- ************************************************************************/
 
 int32 zone_server_region(time_point tick, CTaskMgr::CTask* PTask)
 {
@@ -107,12 +95,6 @@ int32 zone_server_region(time_point tick, CTaskMgr::CTask* PTask)
     }
     return 0;
 }
-
-/************************************************************************
- *                                                                       *
- *                                                                       *
- *                                                                       *
- ************************************************************************/
 
 int32 zone_update_weather(time_point tick, CTaskMgr::CTask* PTask)
 {
@@ -139,8 +121,9 @@ CZone::CZone(ZONEID ZoneID, REGION_TYPE RegionID, CONTINENT_TYPE ContinentID)
 , m_continentID(ContinentID)
 {
     TracyZoneScoped;
-    std::ignore = m_useNavMesh;
-    ZoneTimer   = nullptr;
+    m_useNavMesh = false;
+    std::ignore  = m_useNavMesh;
+    ZoneTimer    = nullptr;
 
     m_TreasurePool       = nullptr;
     m_BattlefieldHandler = nullptr;
@@ -160,6 +143,8 @@ CZone::CZone(ZONEID ZoneID, REGION_TYPE RegionID, CONTINENT_TYPE ContinentID)
 
 CZone::~CZone()
 {
+    delete m_TreasurePool;
+    delete m_CampaignHandler;
     delete m_zoneEntities;
 }
 
@@ -269,6 +254,11 @@ void CZone::SetLocalVar(const char* var, uint32 val)
     m_LocalVars[var] = val;
 }
 
+void CZone::ResetLocalVars()
+{
+    m_LocalVars.clear();
+}
+
 bool CZone::CanUseMisc(uint16 misc) const
 {
     return (m_miscMask & misc) == misc;
@@ -360,7 +350,7 @@ void CZone::LoadZoneWeather()
     }
     else
     {
-        ShowFatalError("CZone::LoadZoneWeather: Cannot load zone weather (%u). Ensure zone_weather.sql has been imported!", m_zoneID);
+        ShowCritical("CZone::LoadZoneWeather: Cannot load zone weather (%u). Ensure zone_weather.sql has been imported!", m_zoneID);
     }
 }
 
@@ -421,7 +411,7 @@ void CZone::LoadZoneSettings()
     }
     else
     {
-        ShowFatalError("CZone::LoadZoneSettings: Cannot load zone settings (%u)", m_zoneID);
+        ShowCritical("CZone::LoadZoneSettings: Cannot load zone settings (%u)", m_zoneID);
     }
 }
 
@@ -439,6 +429,7 @@ void CZone::LoadNavMesh()
 
     if (!m_navMesh->load(file))
     {
+        DebugNavmesh("CZone::LoadNavMesh: Cannot load navmesh file (%s)", file);
         delete m_navMesh;
         m_navMesh = nullptr;
     }
@@ -535,12 +526,6 @@ void CZone::TransportDepart(uint16 boundary, uint16 zone)
 {
     m_zoneEntities->TransportDepart(boundary, zone);
 }
-
-/************************************************************************
- *                                                                       *
- *                                                                       *
- *                                                                       *
- ************************************************************************/
 
 void CZone::SetWeather(WEATHER weather)
 {
@@ -668,15 +653,18 @@ void CZone::DecreaseZoneCounter(CCharEntity* PChar)
 void CZone::IncreaseZoneCounter(CCharEntity* PChar)
 {
     TracyZoneScoped;
-    XI_DEBUG_BREAK_IF(PChar == nullptr);
-    XI_DEBUG_BREAK_IF(PChar->loc.zone != nullptr);
-    XI_DEBUG_BREAK_IF(PChar->PTreasurePool != nullptr);
+
+    if (PChar == nullptr || PChar->loc.zone != nullptr || PChar->PTreasurePool != nullptr)
+    {
+        ShowWarning("CZone::IncreaseZoneCounter() - PChar is null, or Player zone or Treasure Pools is not null.");
+        return;
+    }
 
     PChar->targid = m_zoneEntities->GetNewCharTargID();
 
     if (PChar->targid >= 0x700)
     {
-        ShowError("CZone::InsertChar : targid is high (03hX)", PChar->targid);
+        ShowError("CZone::InsertChar : targid is high (03hX), update packets will be ignored", PChar->targid);
         return;
     }
 
@@ -798,12 +786,6 @@ void CZone::SavePlayTime()
     m_zoneEntities->SavePlayTime();
 }
 
-/************************************************************************
- *                                                                       *
- *                                                                       *
- *                                                                       *
- ************************************************************************/
-
 CCharEntity* CZone::GetCharByName(int8* name)
 {
     return m_zoneEntities->GetCharByName(name);
@@ -824,6 +806,18 @@ void CZone::PushPacket(CBaseEntity* PEntity, GLOBAL_MESSAGE_TYPE message_type, C
 {
     TracyZoneScoped;
     m_zoneEntities->PushPacket(PEntity, message_type, packet);
+}
+
+void CZone::UpdateCharPacket(CCharEntity* PChar, ENTITYUPDATE type, uint8 updatemask)
+{
+    TracyZoneScoped;
+    m_zoneEntities->UpdateCharPacket(PChar, type, updatemask);
+}
+
+void CZone::UpdateEntityPacket(CBaseEntity* PEntity, ENTITYUPDATE type, uint8 updatemask, bool alwaysInclude)
+{
+    TracyZoneScoped;
+    m_zoneEntities->UpdateEntityPacket(PEntity, type, updatemask, alwaysInclude);
 }
 
 /************************************************************************
@@ -932,7 +926,8 @@ void CZone::createZoneTimer()
     TracyZoneScoped;
     ZoneTimer =
         CTaskMgr::getInstance()->AddTask(m_zoneName, server_clock::now(), this, CTaskMgr::TASK_INTERVAL,
-                                         m_regionList.empty() ? zone_server : zone_server_region, std::chrono::milliseconds((int)(1000 / server_tick_rate)));
+                                         m_regionList.empty() ? zone_server : zone_server_region,
+                                         std::chrono::milliseconds(static_cast<uint32>(server_tick_interval)));
 }
 
 void CZone::CharZoneIn(CCharEntity* PChar)
@@ -994,6 +989,8 @@ void CZone::CharZoneIn(CCharEntity* PChar)
     PChar->PLatentEffectContainer->CheckLatentsZone();
 
     charutils::ReadHistory(PChar);
+
+    moduleutils::OnCharZoneIn(PChar);
 }
 
 void CZone::CharZoneOut(CCharEntity* PChar)
@@ -1008,6 +1005,7 @@ void CZone::CharZoneOut(CCharEntity* PChar)
         }
     }
 
+    moduleutils::OnCharZoneOut(PChar);
     luautils::OnZoneOut(PChar);
 
     if (PChar->m_LevelRestriction != 0)
@@ -1102,6 +1100,11 @@ void CZone::CharZoneOut(CCharEntity* PChar)
     charutils::WriteHistory(PChar);
 }
 
+bool CZone::IsZoneActive() const
+{
+    return ZoneTimer != nullptr;
+}
+
 CZoneEntities* CZone::GetZoneEntities()
 {
     TracyZoneScoped;
@@ -1136,7 +1139,7 @@ void CZone::CheckRegions(CCharEntity* PChar)
     PChar->m_InsideRegionID = RegionID;
 }
 
-//====================================1=======================
+//===========================================================
 
 /*
 id              CBaseEntity

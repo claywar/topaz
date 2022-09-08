@@ -3,6 +3,8 @@
 -- Area: Nyzul Isle
 -- Info: Specified Mob Group
 -----------------------------------
+require('scripts/globals/nyzul')
+-----------------------------------
 local entity = {}
 
 entity.onMobDeath = function(mob, player, isKiller, noKiller)

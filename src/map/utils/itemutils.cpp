@@ -23,9 +23,9 @@
 #include <cstring>
 
 #include "../entities/battleentity.h"
+#include "../lua/luautils.h"
 #include "../map.h"
 #include "itemutils.h"
-#include "../lua/luautils.h"
 
 std::array<CItem*, MAX_ITEMID>      g_pItemList; // global array of pointers to game items
 std::array<DropList_t*, MAX_DROPID> g_pDropList; // global array of monster droplist items
@@ -179,40 +179,52 @@ namespace itemutils
 
     CItem* GetItem(CItem* PItem)
     {
-        XI_DEBUG_BREAK_IF(PItem == nullptr);
+        if (PItem == nullptr)
+        {
+            ShowWarning("CItem::GetItem() - PItem is null.");
+            return nullptr;
+        }
 
         if (PItem->isType(ITEM_WEAPON))
         {
             return new CItemWeapon(*((CItemWeapon*)PItem));
         }
+
         if (PItem->isType(ITEM_EQUIPMENT))
         {
             return new CItemEquipment(*((CItemEquipment*)PItem));
         }
+
         if (PItem->isType(ITEM_USABLE))
         {
             return new CItemUsable(*((CItemUsable*)PItem));
         }
+
         if (PItem->isType(ITEM_LINKSHELL))
         {
             return new CItemLinkshell(*((CItemLinkshell*)PItem));
         }
+
         if (PItem->isType(ITEM_FURNISHING))
         {
             return new CItemFurnishing(*((CItemFurnishing*)PItem));
         }
+
         if (PItem->isType(ITEM_PUPPET))
         {
             return new CItemPuppet(*((CItemPuppet*)PItem));
         }
+
         if (PItem->isType(ITEM_GENERAL))
         {
             return new CItemGeneral(*((CItemGeneral*)PItem));
         }
+
         if (PItem->isType(ITEM_CURRENCY))
         {
             return new CItemCurrency(*((CItemCurrency*)PItem));
         }
+
         return nullptr;
     }
 
@@ -245,12 +257,6 @@ namespace itemutils
         return g_pItemList[item->getID()] == item;
     }
 
-    /************************************************************************
-     *                                                                       *
-     *                                                                       *
-     *                                                                       *
-     ************************************************************************/
-
     CItemWeapon* GetUnarmedItem()
     {
         return PUnarmedItem;
@@ -278,12 +284,6 @@ namespace itemutils
         ShowWarning("DropID %u too big", DropID);
         return nullptr;
     }
-
-    /************************************************************************
-     *                                                                       *
-     *                                                                       *
-     *                                                                       *
-     ************************************************************************/
 
     LootList_t* GetLootList(uint16 LootID)
     {
@@ -378,6 +378,7 @@ namespace itemutils
 
                     if (PItem->isType(ITEM_GENERAL))
                     {
+                        // TODO
                     }
 
                     if (PItem->isType(ITEM_USABLE))
@@ -427,11 +428,37 @@ namespace itemutils
                         ((CItemWeapon*)PItem)->setILvlSkill(sql->GetUIntData(26));
                         ((CItemWeapon*)PItem)->setILvlParry(sql->GetUIntData(27));
                         ((CItemWeapon*)PItem)->setILvlMacc(sql->GetUIntData(28));
+                        ((CItemWeapon*)PItem)->setBaseDelay(sql->GetUIntData(29));
                         ((CItemWeapon*)PItem)->setDelay((sql->GetIntData(29) * 1000) / 60);
                         ((CItemWeapon*)PItem)->setDamage(sql->GetUIntData(30));
                         ((CItemWeapon*)PItem)->setDmgType(static_cast<DAMAGE_TYPE>(sql->GetUIntData(31)));
                         ((CItemWeapon*)PItem)->setMaxHit(sql->GetUIntData(32));
-                        ((CItemWeapon*)PItem)->setUnlockablePoints(sql->GetUIntData(33));
+                        ((CItemWeapon*)PItem)->setTotalUnlockPointsNeeded(sql->GetUIntData(33));
+
+                        int  dmg   = sql->GetUIntData(30);
+                        int  delay = sql->GetIntData(29);
+                        bool isH2H = ((CItemWeapon*)PItem)->getSkillType() == SKILL_HAND_TO_HAND;
+
+                        if ((dmg > 0 || isH2H) && delay > 0) // avoid division by zero for items not yet implemented. Zero dmg h2h weapons don't actually have zero dmg for the purposes of DPS.
+                        {
+                            if (isH2H)
+                            {
+                                delay -= 240; // base h2h delay per fist is 240 when used in DPS calculation. We store Delay in the database as Weapon Delay+(240*2).
+                                dmg += 3;     // add 3 base damage for DPS calculation. This base damage addition appears to come from "base" h2h damage of 3.
+                                              // See Ninzas +2 in polutils/bg wiki: https://www.bg-wiki.com/ffxi/Ninzas_%2B2
+                                              // The DPS field is in the DAT itself and is calculated by SE as follows:
+                                              // ((104+3)*60)/(81+240) = 20
+                            }
+
+                            // calculate DPS
+                            double dps = (dmg * 60.0) / delay;
+
+                            // SE seems to round at the second decimal place, see Machine Crossbow, Falcata .DAT DPS values for rounding up and down respectively.
+                            // https://www.bg-wiki.com/ffxi/Falcata, https://www.bg-wiki.com/ffxi/Machine_Crossbow
+                            dps = round(dps * 100) / 100;
+
+                            ((CItemWeapon*)PItem)->setDPS(dps);
+                        }
                     }
 
                     if (PItem->isType(ITEM_FURNISHING))
@@ -488,7 +515,7 @@ namespace itemutils
         }
 
         ret = sql->Query("SELECT itemId, modId, value, latentId, latentParam FROM item_latents WHERE itemId IN (SELECT itemId FROM item_basic LEFT "
-                                   "JOIN item_equipment USING (itemId))");
+                         "JOIN item_equipment USING (itemId))");
 
         if (ret != SQL_ERROR && sql->NumRows() != 0)
         {
@@ -539,11 +566,12 @@ namespace itemutils
                 {
                     uint8  GroupId   = (uint8)sql->GetIntData(4);
                     uint16 GroupRate = (uint16)sql->GetIntData(5);
-                    while (GroupId >= dropList->Groups.size())
+                    while (GroupId > dropList->Groups.size())
                     {
                         dropList->Groups.emplace_back(GroupRate);
                     }
-                    dropList->Groups[GroupId].Items.emplace_back(DropType, ItemID, DropRate);
+                    dropList->Groups[GroupId - 1].GroupRate = GroupRate; // a bit redundant but it prevents any ordering issues.
+                    dropList->Groups[GroupId - 1].Items.emplace_back(DropType, ItemID, DropRate);
                 }
                 else
                 {

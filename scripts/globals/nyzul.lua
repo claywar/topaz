@@ -7,7 +7,6 @@ require("scripts/globals/status")
 require("scripts/globals/utils")
 require("scripts/globals/appraisal")
 require("scripts/globals/zone")
-require("scripts/settings/main")
 -----------------------------------
 xi = xi or {}
 xi.nyzul = xi.nyzul or {}
@@ -265,7 +264,7 @@ xi.nyzul.randomNMs =
     },
 }
 
-xi.nyzul.FloorEntities = -- regular mobs by layout
+xi.nyzul.floorEntities = -- regular mobs by layout
 {
     [1] = -- Aquans
     {
@@ -372,130 +371,130 @@ xi.nyzul.FloorEntities = -- regular mobs by layout
 
 xi.nyzul.appraisalItems =
 {
-    [xi.appraisalUtil.Origin.NYZUL_BAT_EYE              ] = xi.items.APPRAISAL_AXE,
-    [xi.appraisalUtil.Origin.NYZUL_SHADOW_EYE           ] = xi.items.APPRAISAL_NECKLACE,
-    [xi.appraisalUtil.Origin.NYZUL_BOMB_KING            ] = xi.items.APPRAISAL_RING,
-    [xi.appraisalUtil.Origin.NYZUL_JUGGLER_HECATOMB     ] = xi.items.APPRAISAL_POLEARM,
-    [xi.appraisalUtil.Origin.NYZUL_SMOTHERING_SCHMIDT   ] = xi.items.APPRAISAL_RING,
-    [xi.appraisalUtil.Origin.NYZUL_HELLION              ] = xi.items.APPRAISAL_POLEARM,
-    [xi.appraisalUtil.Origin.NYZUL_LEAPING_LIZZY        ] = xi.items.APPRAISAL_FOOTWEAR,
-    [xi.appraisalUtil.Origin.NYZUL_TOM_TIT_TAT          ] = xi.items.APPRAISAL_DAGGER,
-    [xi.appraisalUtil.Origin.NYZUL_JAGGEDY_EARED_JACK   ] = xi.items.APPRAISAL_NECKLACE,
-    [xi.appraisalUtil.Origin.NYZUL_CACTUAR_CANTAUTOR    ] = xi.items.APPRAISAL_FOOTWEAR,
-    [xi.appraisalUtil.Origin.NYZUL_GARGANTUA            ] = xi.items.APPRAISAL_NECKLACE,
-    [xi.appraisalUtil.Origin.NYZUL_GYRE_CARLIN          ] = xi.items.APPRAISAL_BOW,
-    [xi.appraisalUtil.Origin.NYZUL_ASPHYXIATED_AMSEL    ] = xi.items.APPRAISAL_RING,
-    [xi.appraisalUtil.Origin.NYZUL_FROSTMANE            ] = xi.items.APPRAISAL_SWORD,
-    [xi.appraisalUtil.Origin.NYZUL_PEALLAIDH            ] = xi.items.APPRAISAL_GLOVES,
-    [xi.appraisalUtil.Origin.NYZUL_CARNERO              ] = xi.items.APPRAISAL_SWORD,
-    [xi.appraisalUtil.Origin.NYZUL_FALCATUS_ARANEI      ] = xi.items.APPRAISAL_POLEARM,
-    [xi.appraisalUtil.Origin.NYZUL_EMERGENT_ELM         ] = xi.items.APPRAISAL_SWORD,
-    [xi.appraisalUtil.Origin.NYZUL_OLD_TWO_WINGS        ] = xi.items.APPRAISAL_CAPE,
-    [xi.appraisalUtil.Origin.NYZUL_AIATAR               ] = xi.items.APPRAISAL_BOX,
-    [xi.appraisalUtil.Origin.NYZUL_INTULO               ] = xi.items.APPRAISAL_BOX,
-    [xi.appraisalUtil.Origin.NYZUL_ORCTRAP              ] = xi.items.APPRAISAL_DAGGER,
-    [xi.appraisalUtil.Origin.NYZUL_VALKURM_EMPEROR      ] = xi.items.APPRAISAL_HEADPIECE,
-    [xi.appraisalUtil.Origin.NYZUL_CRUSHED_KRAUSE       ] = xi.items.APPRAISAL_RING,
-    [xi.appraisalUtil.Origin.NYZUL_STINGING_SOPHIE      ] = xi.items.APPRAISAL_DAGGER,
-    [xi.appraisalUtil.Origin.NYZUL_SERPOPARD_ISHTAR     ] = xi.items.APPRAISAL_NECKLACE,
-    [xi.appraisalUtil.Origin.NYZUL_WESTERN_SHADOW       ] = xi.items.APPRAISAL_DAGGER,
-    [xi.appraisalUtil.Origin.NYZUL_BLOODTEAR_BALDURF    ] = xi.items.APPRAISAL_SHIELD,
-    [xi.appraisalUtil.Origin.NYZUL_ZIZZY_ZILLAH         ] = xi.items.APPRAISAL_SWORD,
-    [xi.appraisalUtil.Origin.NYZUL_ELLYLLON             ] = xi.items.APPRAISAL_HEADPIECE,
-    [xi.appraisalUtil.Origin.NYZUL_MISCHIEVOUS_MICHOLAS ] = xi.items.APPRAISAL_DAGGER,
-    [xi.appraisalUtil.Origin.NYZUL_LEECH_KING           ] = xi.items.APPRAISAL_EARRING,
-    [xi.appraisalUtil.Origin.NYZUL_EASTERN_SHADOW       ] = xi.items.APPRAISAL_BOW,
-    [xi.appraisalUtil.Origin.NYZUL_NUNYENUNC            ] = xi.items.APPRAISAL_POLEARM,
-    [xi.appraisalUtil.Origin.NYZUL_HELLDIVER            ] = xi.items.APPRAISAL_BOW,
-    [xi.appraisalUtil.Origin.NYZUL_TAISAIJIN            ] = xi.items.APPRAISAL_HEADPIECE,
-    [xi.appraisalUtil.Origin.NYZUL_FUNGUS_BEETLE        ] = xi.items.APPRAISAL_SHIELD,
-    [xi.appraisalUtil.Origin.NYZUL_FRIAR_RUSH           ] = xi.items.APPRAISAL_BOX,
-    [xi.appraisalUtil.Origin.NYZUL_PULVERIZED_PFEFFER   ] = xi.items.APPRAISAL_RING,
-    [xi.appraisalUtil.Origin.NYZUL_ARGUS                ] = xi.items.APPRAISAL_NECKLACE,
-    [xi.appraisalUtil.Origin.NYZUL_BLOODPOOL_VORAX      ] = xi.items.APPRAISAL_NECKLACE,
-    [xi.appraisalUtil.Origin.NYZUL_NIGHTMARE_VASE       ] = xi.items.APPRAISAL_DAGGER,
-    [xi.appraisalUtil.Origin.NYZUL_DAGGERCLAW_DRACOS    ] = xi.items.APPRAISAL_DAGGER,
-    [xi.appraisalUtil.Origin.NYZUL_NORTHERN_SHADOW      ] = xi.items.APPRAISAL_AXE,
-    [xi.appraisalUtil.Origin.NYZUL_FRAELISSA            ] = { xi.items.APPRAISAL_CAPE, xi.items.APPRAISAL_BOW },
-    [xi.appraisalUtil.Origin.NYZUL_ROC                  ] = xi.items.APPRAISAL_POLEARM,
-    [xi.appraisalUtil.Origin.NYZUL_SABOTENDER_BAILARIN  ] = xi.items.APPRAISAL_BOX,
-    [xi.appraisalUtil.Origin.NYZUL_AQUARIUS             ] = xi.items.APPRAISAL_AXE,
-    [xi.appraisalUtil.Origin.NYZUL_ENERGETIC_ERUCA      ] = xi.items.APPRAISAL_GLOVES,
-    [xi.appraisalUtil.Origin.NYZUL_SPINY_SPIPI          ] = xi.items.APPRAISAL_CAPE,
-    [xi.appraisalUtil.Origin.NYZUL_TRICKSTER_KINETIX    ] = xi.items.APPRAISAL_AXE,
-    [xi.appraisalUtil.Origin.NYZUL_DROOLING_DAISY       ] = xi.items.APPRAISAL_HEADPIECE,
-    [xi.appraisalUtil.Origin.NYZUL_BONNACON             ] = xi.items.APPRAISAL_FOOTWEAR,
-    [xi.appraisalUtil.Origin.NYZUL_GOLDEN_BAT           ] = xi.items.APPRAISAL_CAPE,
-    [xi.appraisalUtil.Origin.NYZUL_STEELFLEECE_BALDARICH] = xi.items.APPRAISAL_SHIELD,
-    [xi.appraisalUtil.Origin.NYZUL_SABOTENDER_MARIACHI  ] = xi.items.APPRAISAL_DAGGER,
-    [xi.appraisalUtil.Origin.NYZUL_UNGUR                ] = xi.items.APPRAISAL_BOW,
-    [xi.appraisalUtil.Origin.NYZUL_SWAMFISK             ] = xi.items.APPRAISAL_POLEARM,
-    [xi.appraisalUtil.Origin.NYZUL_BUBURIMBOO           ] = xi.items.APPRAISAL_NECKLACE,
-    [xi.appraisalUtil.Origin.NYZUL_KEEPER_OF_HALIDOM    ] = xi.items.APPRAISAL_SWORD,
-    [xi.appraisalUtil.Origin.NYZUL_SERKET               ] = xi.items.APPRAISAL_RING,
-    [xi.appraisalUtil.Origin.NYZUL_DUNE_WIDOW           ] = xi.items.APPRAISAL_NECKLACE,
-    [xi.appraisalUtil.Origin.NYZUL_ODQAN                ] = xi.items.APPRAISAL_BOX,
-    [xi.appraisalUtil.Origin.NYZUL_BURNED_BERGMANN      ] = xi.items.APPRAISAL_RING,
-    [xi.appraisalUtil.Origin.NYZUL_TYRANNIC_TUNNOK      ] = xi.items.APPRAISAL_AXE,
-    [xi.appraisalUtil.Origin.NYZUL_BLOODSUCKER          ] = xi.items.APPRAISAL_RING,
-    [xi.appraisalUtil.Origin.NYZUL_TOTTERING_TOBY       ] = xi.items.APPRAISAL_FOOTWEAR,
-    [xi.appraisalUtil.Origin.NYZUL_SOUTHERN_SHADOW      ] = xi.items.APPRAISAL_SHIELD,
-    [xi.appraisalUtil.Origin.NYZUL_SHARP_EARED_ROPIPI   ] = xi.items.APPRAISAL_HEADPIECE,
-    [xi.appraisalUtil.Origin.NYZUL_PANZER_PERCIVAL      ] = xi.items.APPRAISAL_AXE,
-    [xi.appraisalUtil.Origin.NYZUL_VOUIVRE              ] = xi.items.APPRAISAL_POLEARM,
-    [xi.appraisalUtil.Origin.NYZUL_JOLLY_GREEN          ] = xi.items.APPRAISAL_SASH,
-    [xi.appraisalUtil.Origin.NYZUL_TUMBLING_TRUFFLE     ] = xi.items.APPRAISAL_HEADPIECE,
-    [xi.appraisalUtil.Origin.NYZUL_CAPRICIOUS_CASSIE    ] = xi.items.APPRAISAL_EARRING,
-    [xi.appraisalUtil.Origin.NYZUL_AMIKIRI              ] = xi.items.APPRAISAL_SWORD,
-    [xi.appraisalUtil.Origin.NYZUL_STRAY_MARY           ] = xi.items.APPRAISAL_BOX,
-    [xi.appraisalUtil.Origin.NYZUL_SEWER_SYRUP          ] = xi.items.APPRAISAL_RING,
-    [xi.appraisalUtil.Origin.NYZUL_UNUT                 ] = xi.items.APPRAISAL_BOX,
-    [xi.appraisalUtil.Origin.NYZUL_SIMURGH              ] = xi.items.APPRAISAL_FOOTWEAR,
-    [xi.appraisalUtil.Origin.NYZUL_PELICAN              ] = xi.items.APPRAISAL_SHIELD,
-    [xi.appraisalUtil.Origin.NYZUL_CARGO_CRAB_COLIN     ] = xi.items.APPRAISAL_SWORD,
-    [xi.appraisalUtil.Origin.NYZUL_WOUNDED_WURFEL       ] = xi.items.APPRAISAL_RING,
-    [xi.appraisalUtil.Origin.NYZUL_PEG_POWLER           ] = xi.items.APPRAISAL_AXE,
-    [xi.appraisalUtil.Origin.NYZUL_JADED_JODY           ] = xi.items.APPRAISAL_BOX,
-    [xi.appraisalUtil.Origin.NYZUL_MAIGHDEAN_UAINE      ] = xi.items.APPRAISAL_EARRING,
+    [xi.appraisal.origin.NYZUL_BAT_EYE              ] = xi.items.APPRAISAL_AXE,
+    [xi.appraisal.origin.NYZUL_SHADOW_EYE           ] = xi.items.APPRAISAL_NECKLACE,
+    [xi.appraisal.origin.NYZUL_BOMB_KING            ] = xi.items.APPRAISAL_RING,
+    [xi.appraisal.origin.NYZUL_JUGGLER_HECATOMB     ] = xi.items.APPRAISAL_POLEARM,
+    [xi.appraisal.origin.NYZUL_SMOTHERING_SCHMIDT   ] = xi.items.APPRAISAL_RING,
+    [xi.appraisal.origin.NYZUL_HELLION              ] = xi.items.APPRAISAL_POLEARM,
+    [xi.appraisal.origin.NYZUL_LEAPING_LIZZY        ] = xi.items.APPRAISAL_FOOTWEAR,
+    [xi.appraisal.origin.NYZUL_TOM_TIT_TAT          ] = xi.items.APPRAISAL_DAGGER,
+    [xi.appraisal.origin.NYZUL_JAGGEDY_EARED_JACK   ] = xi.items.APPRAISAL_NECKLACE,
+    [xi.appraisal.origin.NYZUL_CACTUAR_CANTAUTOR    ] = xi.items.APPRAISAL_FOOTWEAR,
+    [xi.appraisal.origin.NYZUL_GARGANTUA            ] = xi.items.APPRAISAL_NECKLACE,
+    [xi.appraisal.origin.NYZUL_GYRE_CARLIN          ] = xi.items.APPRAISAL_BOW,
+    [xi.appraisal.origin.NYZUL_ASPHYXIATED_AMSEL    ] = xi.items.APPRAISAL_RING,
+    [xi.appraisal.origin.NYZUL_FROSTMANE            ] = xi.items.APPRAISAL_SWORD,
+    [xi.appraisal.origin.NYZUL_PEALLAIDH            ] = xi.items.APPRAISAL_GLOVES,
+    [xi.appraisal.origin.NYZUL_CARNERO              ] = xi.items.APPRAISAL_SWORD,
+    [xi.appraisal.origin.NYZUL_FALCATUS_ARANEI      ] = xi.items.APPRAISAL_POLEARM,
+    [xi.appraisal.origin.NYZUL_EMERGENT_ELM         ] = xi.items.APPRAISAL_SWORD,
+    [xi.appraisal.origin.NYZUL_OLD_TWO_WINGS        ] = xi.items.APPRAISAL_CAPE,
+    [xi.appraisal.origin.NYZUL_AIATAR               ] = xi.items.APPRAISAL_BOX,
+    [xi.appraisal.origin.NYZUL_INTULO               ] = xi.items.APPRAISAL_BOX,
+    [xi.appraisal.origin.NYZUL_ORCTRAP              ] = xi.items.APPRAISAL_DAGGER,
+    [xi.appraisal.origin.NYZUL_VALKURM_EMPEROR      ] = xi.items.APPRAISAL_HEADPIECE,
+    [xi.appraisal.origin.NYZUL_CRUSHED_KRAUSE       ] = xi.items.APPRAISAL_RING,
+    [xi.appraisal.origin.NYZUL_STINGING_SOPHIE      ] = xi.items.APPRAISAL_DAGGER,
+    [xi.appraisal.origin.NYZUL_SERPOPARD_ISHTAR     ] = xi.items.APPRAISAL_NECKLACE,
+    [xi.appraisal.origin.NYZUL_WESTERN_SHADOW       ] = xi.items.APPRAISAL_DAGGER,
+    [xi.appraisal.origin.NYZUL_BLOODTEAR_BALDURF    ] = xi.items.APPRAISAL_SHIELD,
+    [xi.appraisal.origin.NYZUL_ZIZZY_ZILLAH         ] = xi.items.APPRAISAL_SWORD,
+    [xi.appraisal.origin.NYZUL_ELLYLLON             ] = xi.items.APPRAISAL_HEADPIECE,
+    [xi.appraisal.origin.NYZUL_MISCHIEVOUS_MICHOLAS ] = xi.items.APPRAISAL_DAGGER,
+    [xi.appraisal.origin.NYZUL_LEECH_KING           ] = xi.items.APPRAISAL_EARRING,
+    [xi.appraisal.origin.NYZUL_EASTERN_SHADOW       ] = xi.items.APPRAISAL_BOW,
+    [xi.appraisal.origin.NYZUL_NUNYENUNC            ] = xi.items.APPRAISAL_POLEARM,
+    [xi.appraisal.origin.NYZUL_HELLDIVER            ] = xi.items.APPRAISAL_BOW,
+    [xi.appraisal.origin.NYZUL_TAISAIJIN            ] = xi.items.APPRAISAL_HEADPIECE,
+    [xi.appraisal.origin.NYZUL_FUNGUS_BEETLE        ] = xi.items.APPRAISAL_SHIELD,
+    [xi.appraisal.origin.NYZUL_FRIAR_RUSH           ] = xi.items.APPRAISAL_BOX,
+    [xi.appraisal.origin.NYZUL_PULVERIZED_PFEFFER   ] = xi.items.APPRAISAL_RING,
+    [xi.appraisal.origin.NYZUL_ARGUS                ] = xi.items.APPRAISAL_NECKLACE,
+    [xi.appraisal.origin.NYZUL_BLOODPOOL_VORAX      ] = xi.items.APPRAISAL_NECKLACE,
+    [xi.appraisal.origin.NYZUL_NIGHTMARE_VASE       ] = xi.items.APPRAISAL_DAGGER,
+    [xi.appraisal.origin.NYZUL_DAGGERCLAW_DRACOS    ] = xi.items.APPRAISAL_DAGGER,
+    [xi.appraisal.origin.NYZUL_NORTHERN_SHADOW      ] = xi.items.APPRAISAL_AXE,
+    [xi.appraisal.origin.NYZUL_FRAELISSA            ] = { xi.items.APPRAISAL_CAPE, xi.items.APPRAISAL_BOW },
+    [xi.appraisal.origin.NYZUL_ROC                  ] = xi.items.APPRAISAL_POLEARM,
+    [xi.appraisal.origin.NYZUL_SABOTENDER_BAILARIN  ] = xi.items.APPRAISAL_BOX,
+    [xi.appraisal.origin.NYZUL_AQUARIUS             ] = xi.items.APPRAISAL_AXE,
+    [xi.appraisal.origin.NYZUL_ENERGETIC_ERUCA      ] = xi.items.APPRAISAL_GLOVES,
+    [xi.appraisal.origin.NYZUL_SPINY_SPIPI          ] = xi.items.APPRAISAL_CAPE,
+    [xi.appraisal.origin.NYZUL_TRICKSTER_KINETIX    ] = xi.items.APPRAISAL_AXE,
+    [xi.appraisal.origin.NYZUL_DROOLING_DAISY       ] = xi.items.APPRAISAL_HEADPIECE,
+    [xi.appraisal.origin.NYZUL_BONNACON             ] = xi.items.APPRAISAL_FOOTWEAR,
+    [xi.appraisal.origin.NYZUL_GOLDEN_BAT           ] = xi.items.APPRAISAL_CAPE,
+    [xi.appraisal.origin.NYZUL_STEELFLEECE_BALDARICH] = xi.items.APPRAISAL_SHIELD,
+    [xi.appraisal.origin.NYZUL_SABOTENDER_MARIACHI  ] = xi.items.APPRAISAL_DAGGER,
+    [xi.appraisal.origin.NYZUL_UNGUR                ] = xi.items.APPRAISAL_BOW,
+    [xi.appraisal.origin.NYZUL_SWAMFISK             ] = xi.items.APPRAISAL_POLEARM,
+    [xi.appraisal.origin.NYZUL_BUBURIMBOO           ] = xi.items.APPRAISAL_NECKLACE,
+    [xi.appraisal.origin.NYZUL_KEEPER_OF_HALIDOM    ] = xi.items.APPRAISAL_SWORD,
+    [xi.appraisal.origin.NYZUL_SERKET               ] = xi.items.APPRAISAL_RING,
+    [xi.appraisal.origin.NYZUL_DUNE_WIDOW           ] = xi.items.APPRAISAL_NECKLACE,
+    [xi.appraisal.origin.NYZUL_ODQAN                ] = xi.items.APPRAISAL_BOX,
+    [xi.appraisal.origin.NYZUL_BURNED_BERGMANN      ] = xi.items.APPRAISAL_RING,
+    [xi.appraisal.origin.NYZUL_TYRANNIC_TUNNOK      ] = xi.items.APPRAISAL_AXE,
+    [xi.appraisal.origin.NYZUL_BLOODSUCKER          ] = xi.items.APPRAISAL_RING,
+    [xi.appraisal.origin.NYZUL_TOTTERING_TOBY       ] = xi.items.APPRAISAL_FOOTWEAR,
+    [xi.appraisal.origin.NYZUL_SOUTHERN_SHADOW      ] = xi.items.APPRAISAL_SHIELD,
+    [xi.appraisal.origin.NYZUL_SHARP_EARED_ROPIPI   ] = xi.items.APPRAISAL_HEADPIECE,
+    [xi.appraisal.origin.NYZUL_PANZER_PERCIVAL      ] = xi.items.APPRAISAL_AXE,
+    [xi.appraisal.origin.NYZUL_VOUIVRE              ] = xi.items.APPRAISAL_POLEARM,
+    [xi.appraisal.origin.NYZUL_JOLLY_GREEN          ] = xi.items.APPRAISAL_SASH,
+    [xi.appraisal.origin.NYZUL_TUMBLING_TRUFFLE     ] = xi.items.APPRAISAL_HEADPIECE,
+    [xi.appraisal.origin.NYZUL_CAPRICIOUS_CASSIE    ] = xi.items.APPRAISAL_EARRING,
+    [xi.appraisal.origin.NYZUL_AMIKIRI              ] = xi.items.APPRAISAL_SWORD,
+    [xi.appraisal.origin.NYZUL_STRAY_MARY           ] = xi.items.APPRAISAL_BOX,
+    [xi.appraisal.origin.NYZUL_SEWER_SYRUP          ] = xi.items.APPRAISAL_RING,
+    [xi.appraisal.origin.NYZUL_UNUT                 ] = xi.items.APPRAISAL_BOX,
+    [xi.appraisal.origin.NYZUL_SIMURGH              ] = xi.items.APPRAISAL_FOOTWEAR,
+    [xi.appraisal.origin.NYZUL_PELICAN              ] = xi.items.APPRAISAL_SHIELD,
+    [xi.appraisal.origin.NYZUL_CARGO_CRAB_COLIN     ] = xi.items.APPRAISAL_SWORD,
+    [xi.appraisal.origin.NYZUL_WOUNDED_WURFEL       ] = xi.items.APPRAISAL_RING,
+    [xi.appraisal.origin.NYZUL_PEG_POWLER           ] = xi.items.APPRAISAL_AXE,
+    [xi.appraisal.origin.NYZUL_JADED_JODY           ] = xi.items.APPRAISAL_BOX,
+    [xi.appraisal.origin.NYZUL_MAIGHDEAN_UAINE      ] = xi.items.APPRAISAL_EARRING,
 }
 
 -- Local functions
-local function get_token_rate(instance)
-    local party_size = instance:getLocalVar("partySize")
+local function getTokenRate(instance)
+    local partySize = instance:getLocalVar("partySize")
     local rate       = 1
 
-    if party_size > 3 then
-        rate = rate - ((party_size - 3 ) * .1)
+    if partySize > 3 then
+        rate = rate - ((partySize - 3 ) * .1)
     end
 
     return rate
 end
 
-local function calculate_tokens(instance)
-    local relative_floor   = xi.nyzul.get_relative_floor(instance)
-    local rate             = get_token_rate(instance)
-    local potential_tokens = instance:getLocalVar("potential_tokens")
-    local floor_bonus      = 0
+local function calculateTokens(instance)
+    local relativeFloor   = xi.nyzul.getRelativeFloor(instance)
+    local rate            = getTokenRate(instance)
+    local potentialTokens = instance:getLocalVar("potential_tokens")
+    local floorBonus      = 0
 
-    if relative_floor > 1 then
-        floor_bonus = (10 * math.floor((relative_floor - 1) / 5))
+    if relativeFloor > 1 then
+        floorBonus = (10 * math.floor((relativeFloor - 1) / 5))
     end
 
-    potential_tokens = math.floor(potential_tokens + (200 + floor_bonus) * rate)
+    potentialTokens = math.floor(potentialTokens + (200 + floorBonus) * rate)
 
-    return potential_tokens
+    return potentialTokens
 end
 
 -- Global functions
-xi.nyzul.get_relative_floor = function(instance)
-    local current_floor  = instance:getLocalVar("Nyzul_Current_Floor")
-    local starting_floor = instance:getLocalVar("Nyzul_Isle_StartingFloor")
+xi.nyzul.getRelativeFloor = function(instance)
+    local currentFloor  = instance:getLocalVar("Nyzul_Current_Floor")
+    local startingFloor = instance:getLocalVar("Nyzul_Isle_StartingFloor")
 
-    if current_floor < starting_floor then
-        return current_floor + 100
+    if currentFloor < startingFloor then
+        return currentFloor + 100
     end
 
-    return current_floor
+    return currentFloor
 end
 
 xi.nyzul.handleAppraisalItem = function(player, npc)
@@ -722,7 +721,7 @@ xi.nyzul.handleProgress = function(instance, progress)
     then
         instance:setProgress(0)
         instance:setLocalVar("Eliminate", 0)
-        instance:setLocalVar("potential_tokens", calculate_tokens(instance))
+        instance:setLocalVar("potential_tokens", calculateTokens(instance))
 
         for _, players in ipairs(chars) do
             players:messageSpecial(ID.text.OBJECTIVE_COMPLETE, currectFloor)
@@ -972,9 +971,9 @@ xi.nyzul.addPenalty = function(mob)
     end
 end
 
-xi.nyzul.get_token_penalty = function(instance)
+xi.nyzul.getTokenPenalty = function(instance)
     local floor_penalities = instance:getLocalVar("tokenPenalty")
-    local rate             = get_token_rate(instance)
+    local rate             = getTokenRate(instance)
 
     return math.floor(117 * rate) * floor_penalities
 end

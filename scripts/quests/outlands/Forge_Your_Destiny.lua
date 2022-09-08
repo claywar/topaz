@@ -12,7 +12,7 @@ require('scripts/globals/items')
 require('scripts/globals/keyitems')
 require('scripts/globals/npc_util')
 require('scripts/globals/quests')
-require('scripts/settings/main')
+require('scripts/globals/settings')
 require('scripts/globals/titles')
 require('scripts/globals/zone')
 require('scripts/globals/interaction/quest')
@@ -27,7 +27,7 @@ local quest = Quest:new(xi.quest.log_id.OUTLANDS, xi.quest.id.outlands.FORGE_YOU
 quest.reward =
 {
     fame = 30,
-    fameArea = NORG,
+    fameArea = xi.quest.fame_area.NORG,
     item = xi.items.MUMEITO,
     title = xi.title.BUSHIDO_BLADE,
 }
@@ -36,7 +36,7 @@ quest.sections =
 {
     {
         check = function(player, status, vars)
-            return status == QUEST_AVAILABLE and player:getMainLvl() >= xi.settings.ADVANCED_JOB_LEVEL
+            return status == QUEST_AVAILABLE and player:getMainLvl() >= xi.settings.main.ADVANCED_JOB_LEVEL
         end,
 
         [xi.zone.NORG] =
@@ -239,7 +239,10 @@ quest.sections =
             ['qm2'] =
             {
                 onTrade = function(player, npc, trade)
-                    if npcUtil.tradeHasExactly(trade, xi.items.HATCHET) then
+                    if
+                        npcUtil.tradeHasExactly(trade, xi.items.HATCHET) and
+                        player:hasItem(xi.items.SACRED_SPRIG)
+                    then
                         if
                             GetMobByID(zitahID.mob.GUARDIAN_TREANT):isSpawned() or
                             npc:getLocalVar('treantNextPopAllowedTime') > os.time()
@@ -269,7 +272,7 @@ quest.sections =
                     then
                         quest:setVar(player, 'Prog', 2)
                         player:confirmTrade()
-                        return quest:messageSpecial(zitahID.text.STRANGE_FORCE_VANISHED, xi.items.SACRED_SPRIG)
+                        return quest:messageSpecial(zitahID.text.STRANGE_FORCE_VANISHED, xi.items.SACRED_BRANCH)
                     end
                 end,
 

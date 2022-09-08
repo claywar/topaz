@@ -29,4 +29,3 @@ g_mixins.nyzul_boss_drop = function(nyzulMob)
 end
 
 return g_mixins.nyzul_boss_drop
-

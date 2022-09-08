@@ -1,4 +1,4 @@
-/*
+﻿/*
 ===========================================================================
 
 Copyright (c) 2010-2015 Darkstar Dev Teams
@@ -141,12 +141,11 @@ bool CMobController::CheckLock(CBattleEntity* PTarget)
     return false;
 }
 
-
 bool CMobController::CheckDetection(CBattleEntity* PTarget)
 {
     TracyZoneScoped;
     if (CanDetectTarget(PTarget) || CanPursueTarget(PTarget) ||
-        PMob->StatusEffectContainer->HasStatusEffect({ EFFECT_BIND, EFFECT_SLEEP, EFFECT_SLEEP_II, EFFECT_LULLABY }))
+        PMob->StatusEffectContainer->HasStatusEffect({ EFFECT_BIND, EFFECT_SLEEP, EFFECT_SLEEP_II, EFFECT_LULLABY, EFFECT_PETRIFICATION }))
     {
         TapDeaggroTime();
     }
@@ -183,7 +182,11 @@ void CMobController::TryLink()
     {
         for (auto& member : PMob->PParty->members)
         {
-            CMobEntity* PPartyMember = (CMobEntity*)member;
+            CMobEntity* PPartyMember = dynamic_cast<CMobEntity*>(member);
+            if (!PPartyMember)
+            {
+                continue;
+            }
 
             if (PPartyMember->PAI->IsRoaming() && PPartyMember->CanLink(&PMob->loc.p, PMob->getMobMod(MOBMOD_SUPERLINK)))
             {
@@ -219,13 +222,6 @@ bool CMobController::CanDetectTarget(CBattleEntity* PTarget, bool forceSight)
 {
     TracyZoneScoped;
     if (PTarget->isDead() || PTarget->isMounted())
-    {
-        return false;
-    }
-
-    float verticalDistance = abs(PMob->loc.p.y - PTarget->loc.p.y);
-
-    if (verticalDistance > 8)
     {
         return false;
     }
@@ -312,7 +308,7 @@ bool CMobController::MobSkill(int wsList)
 
     if (auto overrideSkill = luautils::OnMobWeaponSkillPrepare(PMob, PTarget); overrideSkill > 0)
     {
-        skillList = {overrideSkill};
+        skillList = { overrideSkill };
     }
 
     if (skillList.empty())
@@ -346,7 +342,7 @@ bool CMobController::MobSkill(int wsList)
 
         PActionTarget = luautils::OnMobSkillTarget(PActionTarget, PMob, PMobSkill);
 
-        if (PActionTarget && !PMobSkill->isTwoHour() && luautils::OnMobSkillCheck(PActionTarget, PMob, PMobSkill) == 0) // A script says that the move in question is valid
+        if (PActionTarget && !PMobSkill->isAstralFlow() && luautils::OnMobSkillCheck(PActionTarget, PMob, PMobSkill) == 0) // A script says that the move in question is valid
         {
             float currentDistance = distance(PMob->loc.p, PActionTarget->loc.p);
 
@@ -681,6 +677,8 @@ void CMobController::Move()
                 PMob->PAI->PathFind->FollowPath();
                 if (!PMob->PAI->PathFind->IsFollowingPath())
                 {
+                    bool needToMove = false;
+
                     // arrived at target - move if there is another mob under me
                     if (PTarget->objtype == TYPE_PC)
                     {
@@ -689,16 +687,34 @@ void CMobController::Move()
                             if (PSpawnedMob.second != PMob && !PSpawnedMob.second->PAI->PathFind->IsFollowingPath() &&
                                 distance(PSpawnedMob.second->loc.p, PMob->loc.p) < 1.f)
                             {
-                                auto       angle = worldAngle(PMob->loc.p, PTarget->loc.p) + 64;
-                                position_t new_pos{ PMob->loc.p.x - (cosf(rotationToRadian(angle)) * 1.5f), PTarget->loc.p.y,
-                                                    PMob->loc.p.z + (sinf(rotationToRadian(angle)) * 1.5f), 0, 0 };
+                                auto angle = worldAngle(PMob->loc.p, PTarget->loc.p) + 64;
+
+                                // clang-format off
+                                position_t new_pos
+                                {
+                                    PMob->loc.p.x - (cosf(rotationToRadian(angle)) * 1.5f),
+                                    PTarget->loc.p.y,
+                                    PMob->loc.p.z + (sinf(rotationToRadian(angle)) * 1.5f),
+                                    0,
+                                    0
+                                };
+                                // clang-format on
+
                                 if (PMob->PAI->PathFind->ValidPosition(new_pos))
                                 {
                                     PMob->PAI->PathFind->PathTo(new_pos, PATHFLAG_WALLHACK | PATHFLAG_RUN);
+                                    needToMove = true;
                                 }
                                 break;
                             }
                         }
+                    }
+
+                    // Fix corner case where mob is attacking target at essentially exactly the distance that canMoveForward returns true at.
+                    // where the mob doesn't rotate to face their target.
+                    if (!needToMove)
+                    {
+                        FaceTarget();
                     }
                 }
             }
@@ -783,10 +799,9 @@ void CMobController::DoRoamTick(time_point tick)
         else if (m_Tick >= m_LastActionTime + std::chrono::milliseconds(PMob->getBigMobMod(MOBMOD_ROAM_COOL)))
         {
             // lets buff up or move around
-
-            if (PMob->CalledForHelp())
+            if (PMob->GetCallForHelpFlag())
             {
-                PMob->CallForHelp(false);
+                PMob->SetCallForHelpFlag(false);
             }
 
             // can't rest with poison or disease
@@ -809,7 +824,7 @@ void CMobController::DoRoamTick(time_point tick)
             }
 
             // if I just disengaged check if I should despawn
-            if (PMob->IsFarFromHome())
+            if (!PMob->getMobMod(MOBMOD_DONT_ROAM_HOME) && PMob->IsFarFromHome())
             {
                 if (PMob->CanRoamHome() && PMob->PAI->PathFind->PathTo(PMob->m_SpawnPoint))
                 {
@@ -824,7 +839,7 @@ void CMobController::DoRoamTick(time_point tick)
                     // move back every 5 seconds
                     m_LastActionTime = m_Tick - (std::chrono::milliseconds(PMob->getBigMobMod(MOBMOD_ROAM_COOL)) + 10s);
                 }
-                else if (!(PMob->getMobMod(MOBMOD_NO_DESPAWN) != 0) && !map_config.mob_no_despawn)
+                else if (!(PMob->getMobMod(MOBMOD_NO_DESPAWN) != 0) && !settings::get<bool>("map.MOB_NO_DESPAWN"))
                 {
                     PMob->PAI->Despawn();
                     return;
@@ -857,9 +872,10 @@ void CMobController::DoRoamTick(time_point tick)
                         CastSpell(spellID.value());
                     }
                 }
-                else if (PMob->m_roamFlags & ROAMFLAG_EVENT)
+                else if (PMob->m_roamFlags & ROAMFLAG_SCRIPTED)
                 {
                     // allow custom event action
+                    PMob->PAI->EventHandler.triggerListener("ROAM_ACTION", CLuaBaseEntity(PMob));
                     luautils::OnMobRoamAction(PMob);
                     m_LastActionTime = m_Tick;
                 }
@@ -872,7 +888,7 @@ void CMobController::DoRoamTick(time_point tick)
                         // move down
                         PMob->animationsub = 1;
                         PMob->HideName(true);
-                        PMob->Untargetable(true);
+                        PMob->SetUntargetable(true);
 
                         // don't move around until i'm fully in the ground
                         Wait(2s);
@@ -881,7 +897,7 @@ void CMobController::DoRoamTick(time_point tick)
                     {
                         // hidden name
                         PMob->HideName(true);
-                        PMob->Untargetable(true);
+                        PMob->SetUntargetable(true);
 
                         PMob->updatemask |= UPDATE_HP;
                     }
@@ -944,12 +960,12 @@ void CMobController::FollowRoamPath()
             {
                 PMob->animationsub = 0;
                 PMob->HideName(false);
-                PMob->Untargetable(false);
+                PMob->SetUntargetable(false);
             }
 
             // face spawn rotation if I just moved back to spawn
             // used by dynamis mobs, bcnm mobs etc
-            if ((PMob->m_roamFlags & ROAMFLAG_EVENT) && distance(PMob->loc.p, PMob->m_SpawnPoint) <= PMob->m_maxRoamDistance)
+            if (PMob->getMobMod(MOBMOD_ROAM_RESET_FACING) && distance(PMob->loc.p, PMob->m_SpawnPoint) <= PMob->m_maxRoamDistance)
             {
                 PMob->loc.p.rotation = PMob->m_SpawnPoint.rotation;
             }
@@ -957,6 +973,7 @@ void CMobController::FollowRoamPath()
 
         if (PMob->PAI->PathFind->OnPoint())
         {
+            PMob->PAI->EventHandler.triggerListener("PATH", CLuaBaseEntity(PMob));
             luautils::OnPath(PMob);
         }
     }
@@ -1015,7 +1032,7 @@ bool CMobController::Disengage()
 
     PMob->m_OwnerID.clean();
     PMob->updatemask |= (UPDATE_STATUS | UPDATE_HP);
-    PMob->CallForHelp(false);
+    PMob->SetCallForHelpFlag(false);
     PMob->animation = ANIMATION_NONE;
 
     return CController::Disengage();

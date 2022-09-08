@@ -6,7 +6,7 @@
 -- !pos -38 -3 73 233
 -----------------------------------
 require("scripts/globals/status")
-require("scripts/settings/main")
+require("scripts/globals/settings")
 require("scripts/globals/keyitems")
 require("scripts/globals/missions")
 require("scripts/globals/quests")
@@ -53,7 +53,7 @@ entity.onTrigger = function(player, npc)
     if player:getCharVar("UnderOathCS") == 8 then
         player:startEvent(89)
     elseif
-        player:getMainJob() == xi.job.PLD and mLvl >= xi.settings.AF2_QUEST_LEVEL and
+        player:getMainJob() == xi.job.PLD and mLvl >= xi.settings.main.AF2_QUEST_LEVEL and
         aBoysDream == QUEST_COMPLETED and underOath == QUEST_AVAILABLE
     then
         player:startEvent(90) -- Start
@@ -87,7 +87,7 @@ entity.onEventFinish = function(player, csid, option)
             player:addItem(14095)
             player:messageSpecial(ID.text.ITEM_OBTAINED, 14095) -- Gallant Leggings
             player:setCharVar("aBoysDreamCS", 0)
-            player:addFame(SANDORIA, 40)
+            player:addFame(xi.quest.fame_area.SANDORIA, 40)
             player:completeQuest(xi.quest.log_id.SANDORIA, xi.quest.id.sandoria.A_BOY_S_DREAM)
         end
     elseif (csid == 90 and option == 1) then
@@ -100,7 +100,7 @@ entity.onEventFinish = function(player, csid, option)
             player:addItem(12644)
             player:messageSpecial(ID.text.ITEM_OBTAINED, 12644) -- Gallant Surcoat
             player:setCharVar("UnderOathCS", 9)
-            player:addFame(SANDORIA, 60)
+            player:addFame(xi.quest.fame_area.SANDORIA, 60)
             player:setTitle(xi.title.PARAGON_OF_PALADIN_EXCELLENCE)
             player:completeQuest(xi.quest.log_id.SANDORIA, xi.quest.id.sandoria.UNDER_OATH)
         end

@@ -6,7 +6,7 @@
 -- !pos 35 0 -15 245
 -----------------------------------
 local ID = require("scripts/zones/Lower_Jeuno/IDs")
-require("scripts/settings/main")
+require("scripts/globals/settings")
 require("scripts/globals/titles")
 require("scripts/globals/keyitems")
 require("scripts/globals/shop")
@@ -84,7 +84,7 @@ entity.onEventFinish = function(player, csid, option)
             player:addItem(13186)
             player:messageSpecial(ID.text.ITEM_OBTAINED, 13186)
             player:setCharVar("BeatAroundTheBushin", 0)
-            player:addFame(NORG, 125)
+            player:addFame(xi.quest.fame_area.NORG, 125)
             player:tradeComplete()
             player:completeQuest(xi.quest.log_id.JEUNO, xi.quest.id.jeuno.BEAT_AROUND_THE_BUSHIN)
         end

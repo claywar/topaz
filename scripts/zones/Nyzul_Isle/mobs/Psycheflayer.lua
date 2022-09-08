@@ -3,7 +3,7 @@
 -- Area: Nyzul Isle
 -- Info: Specified Mob Group and Eliminate all Group
 -----------------------------------
-require("scripts/globals/nyzul")
+require('scripts/globals/nyzul')
 -----------------------------------
 local entity = {}
 

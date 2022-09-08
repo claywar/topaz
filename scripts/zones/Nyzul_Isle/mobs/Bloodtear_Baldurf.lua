@@ -2,8 +2,8 @@
 -- Area: Nyzul Isle
 --  NM:  Bloodtear_Baldurf
 -----------------------------------
-mixins = {require("scripts/mixins/job_special")}
-require("scripts/globals/nyzul")
+mixins = { require('scripts/mixins/job_special') }
+require('scripts/globals/nyzul')
 -----------------------------------
 local entity = {}
 

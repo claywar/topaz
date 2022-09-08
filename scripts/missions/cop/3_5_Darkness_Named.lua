@@ -12,7 +12,7 @@ require('scripts/globals/keyitems')
 require('scripts/globals/missions')
 require('scripts/globals/npc_util')
 require('scripts/globals/zone')
-require('scripts/settings/main')
+require('scripts/globals/settings')
 -----------------------------------
 local upperJeunoID = require("scripts/zones/Upper_Jeuno/IDs")
 -----------------------------------
@@ -54,7 +54,7 @@ mission.sections =
                             npcUtil.tradeHasExactly(trade, xi.items.GRAY_CHIP)
                         )
                     then
-                        return mission:progressEvent(52, 500 * xi.settings.GIL_RATE)
+                        return mission:progressEvent(52, 500 * xi.settings.main.GIL_RATE)
                     end
                 end,
 
@@ -95,7 +95,7 @@ mission.sections =
                 [52] = function(player, csid, option, npc)
                     player:confirmTrade()
 
-                    player:addGil(500 * xi.settings.GIL_RATE)
+                    player:addGil(500 * xi.settings.main.GIL_RATE)
                     npcUtil.giveKeyItem(player, xi.ki.PSOXJA_PASS)
                     mission:setVar(player, 'Status', 3)
                 end,
@@ -161,6 +161,37 @@ mission.sections =
                     then
                         player:addTitle(xi.title.TRANSIENT_DREAMER)
                         mission:setVar(player, 'Status', 5)
+                    end
+                end,
+            },
+        },
+    },
+
+    {
+        check = function(player, currentMission, missionStatus, vars)
+            return player:hasCompletedMission(mission.areaId, mission.missionId)
+        end,
+
+        [xi.zone.TAVNAZIAN_SAFEHOLD] =
+        {
+            ['Chemioue']     = mission:event(282):replaceDefault(),
+            ['Justinius']    = mission:event(129):replaceDefault(),
+            ['Parelbriaux']  = mission:event(296):replaceDefault(),
+
+            ['Arquil'] =
+            {
+                onTrigger = function(player, npc)
+                    if not player:hasCompletedMission(xi.mission.log_id.COP, xi.mission.id.cop.SLANDEROUS_UTTERINGS) then
+                        return mission:event(292):replaceDefault()
+                    end
+                end,
+            },
+
+            ['Despachiaire'] =
+            {
+                onTrigger = function(player, npc)
+                    if not player:hasCompletedMission(xi.mission.log_id.COP, xi.mission.id.cop.SLANDEROUS_UTTERINGS) then
+                        return mission:event(315):replaceDefault()
                     end
                 end,
             },

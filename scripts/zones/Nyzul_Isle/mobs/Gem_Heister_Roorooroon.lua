@@ -3,16 +3,16 @@
 -- Area: Nyzul Isle
 -- Info: Enemy Leader, Thief job, runs around dropping bombs
 -----------------------------------
-require("scripts/globals/pathfind")
-require("scripts/globals/status")
-require("scripts/globals/nyzul")
+require('scripts/globals/pathfind')
+require('scripts/globals/status')
+require('scripts/globals/nyzul')
 -----------------------------------
 local entity = {}
 
 local function pickRunPoint(mob)
     mob:setLocalVar("ignore", 1)
-    local distance   = math.random(10, 25)
-    local angle      = math.random() * math.pi
+    -- local distance   = math.random(10, 25)
+    -- local angle      = math.random() * math.pi
     local fromTarget = mob:getTarget()
 
     if fromTarget == nil then

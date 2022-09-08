@@ -7,7 +7,6 @@
 local ID = require("scripts/zones/Nyzul_Isle/IDs")
 require("scripts/globals/keyitems")
 require("scripts/globals/npc_util")
-require("scripts/settings/main")
 require("scripts/globals/nyzul")
 require("scripts/zones/Nyzul_Isle/instances/nyzul_isle_investigation")
 -----------------------------------
@@ -30,7 +29,7 @@ entity.onTrigger = function(player, npc)
     else
         instance:setLocalVar("runeHandler", player:getID())
         player:startEvent(94, xi.ki.RUNIC_DISC, tokens, 1, prefered, 100, 200, 300, floorProgress)
-	end
+    end
 end
 
 entity.onEventFinish = function(player, csid, option, npc)

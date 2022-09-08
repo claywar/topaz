@@ -6,7 +6,7 @@
 require("scripts/globals/items")
 require("scripts/globals/keyitems")
 require("scripts/globals/npc_util")
-require("scripts/settings/main")
+require("scripts/globals/settings")
 require("scripts/globals/quests")
 require("scripts/globals/status")
 require("scripts/globals/zone")
@@ -36,7 +36,7 @@ local thiefKeyInfo =
     [keyType.LIVING_KEY  ] = { xi.items.LIVING_KEY,          0.15 },
 }
 
-local treasureInfo =
+xi.treasure.treasureInfo =
 {
     [xi.treasure.type.CHEST] =
     {
@@ -324,7 +324,7 @@ local treasureInfo =
                         test = function(player) return player:getQuestStatus(xi.quest.log_id.BASTOK, xi.quest.id.bastok.A_TEST_OF_TRUE_LOVE) == QUEST_ACCEPTED and not player:hasKeyItem(xi.ki.UN_MOMENT) end,
                         code = function(player)
                             npcUtil.giveKeyItem(player, xi.ki.UN_MOMENT)
-                            player:addCharVar("ATestOfTrueLoveProgress", 1)
+                            player:incrementCharVar("ATestOfTrueLoveProgress", 1)
                         end,
                     },
                 },
@@ -360,7 +360,7 @@ local treasureInfo =
                         test = function(player) return player:getQuestStatus(xi.quest.log_id.BASTOK, xi.quest.id.bastok.A_TEST_OF_TRUE_LOVE) == QUEST_ACCEPTED and not player:hasKeyItem(xi.ki.UN_MOMENT) end,
                         code = function(player)
                             npcUtil.giveKeyItem(player, xi.ki.UN_MOMENT)
-                            player:addCharVar("ATestOfTrueLoveProgress", 1)
+                            player:incrementCharVar("ATestOfTrueLoveProgress", 1)
                         end,
                     },
                 },
@@ -383,7 +383,7 @@ local treasureInfo =
                         test = function(player) return player:getQuestStatus(xi.quest.log_id.BASTOK, xi.quest.id.bastok.A_TEST_OF_TRUE_LOVE) == QUEST_ACCEPTED and not player:hasKeyItem(xi.ki.LEPHEMERE) end,
                         code = function(player)
                             npcUtil.giveKeyItem(player, xi.ki.LEPHEMERE)
-                            player:addCharVar("ATestOfTrueLoveProgress", 1)
+                            player:incrementCharVar("ATestOfTrueLoveProgress", 1)
                         end,
                     },
                 },
@@ -707,7 +707,7 @@ local treasureInfo =
                         test = function(player) return player:getQuestStatus(xi.quest.log_id.BASTOK, xi.quest.id.bastok.A_TEST_OF_TRUE_LOVE) == QUEST_ACCEPTED and not player:hasKeyItem(xi.ki.LANCIENNE) end,
                         code = function(player)
                             npcUtil.giveKeyItem(player, xi.ki.LANCIENNE)
-                            player:addCharVar("ATestOfTrueLoveProgress", 1)
+                            player:incrementCharVar("ATestOfTrueLoveProgress", 1)
                         end,
                     },
                 },
@@ -788,7 +788,8 @@ local treasureInfo =
             {
                 treasureLvl = 53,
                 key = 1043,
-                hands = {
+                hands =
+                {
                     [xi.job.WHM] = true,
                 },
                 af =
@@ -816,7 +817,8 @@ local treasureInfo =
             {
                 treasureLvl = 53,
                 key = 1042,
-                hands = {
+                hands =
+                {
                     [xi.job.THF] = true,
                 },
                 af =
@@ -875,7 +877,8 @@ local treasureInfo =
                 treasureLvl = 53,
                 key = 1052,
                 map = xi.ki.MAP_OF_THE_BOYAHDA_TREE,
-                hands = {
+                hands =
+                {
                     [xi.job.DRG] = true,
                 },
                 af =
@@ -956,7 +959,8 @@ local treasureInfo =
             {
                 treasureLvl = 53,
                 key = 1048,
-                hands = {
+                hands =
+                {
                     [xi.job.BRD] = true,
                 },
                 af =
@@ -1030,7 +1034,8 @@ local treasureInfo =
                 treasureLvl = 53,
                 key = 1051,
                 map = xi.ki.MAP_OF_THE_KUFTAL_TUNNEL,
-                hands = {
+                hands =
+                {
                     [xi.job.SAM] = true,
                 },
                 misc =
@@ -1068,7 +1073,8 @@ local treasureInfo =
                 treasureLvl = 53,
                 key = 1059,
                 map = xi.ki.MAP_OF_SEA_SERPENT_GROTTO,
-                hands = {
+                hands =
+                {
                     [xi.job.SMN] = true,
                 },
                 af =
@@ -1116,7 +1122,8 @@ local treasureInfo =
             {
                 treasureLvl = 53,
                 key = 1046,
-                hands = {
+                hands =
+                {
                     [xi.job.WAR] = true,
                     [xi.job.RDM] = true,
                     [xi.job.PLD] = true,
@@ -1146,7 +1153,8 @@ local treasureInfo =
             {
                 treasureLvl = 53,
                 key = 1045,
-                hands = {
+                hands =
+                {
                     [xi.job.MNK] = true,
                     [xi.job.BST] = true,
                 },
@@ -1175,7 +1183,8 @@ local treasureInfo =
             {
                 treasureLvl = 53,
                 key = 1047,
-                hands = {
+                hands =
+                {
                     [xi.job.BLM] = true,
                     [xi.job.RNG] = true,
                 },
@@ -1206,7 +1215,8 @@ local treasureInfo =
                 treasureLvl = 53,
                 key = 1053,
                 map = xi.ki.MAP_OF_IFRITS_CAULDRON,
-                hands = {
+                hands =
+                {
                     [xi.job.NIN] = true,
                 },
                 af =
@@ -1273,7 +1283,7 @@ local function doMove(npc, x, y, z)
 end
 
 local function moveChest(npc, zoneId, chestType, mimicSpawned)
-    local points = treasureInfo[chestType].zone[zoneId].points
+    local points = xi.treasure.treasureInfo[chestType].zone[zoneId].points
     local point = points[math.random(#points)]
     if not mimicSpawned then
         npc:hideNPC(5)
@@ -1373,7 +1383,7 @@ xi.treasure.onTrade = function(player, npc, trade, chestType)
     local zoneId = player:getZoneID()
     local ID = zones[zoneId]
     local msgBase = ID.text.CHEST_UNLOCKED
-    local info = treasureInfo[chestType].zone[zoneId]
+    local info = xi.treasure.treasureInfo[chestType].zone[zoneId]
     local mJob = player:getMainJob()
     local activeHands = player:getCharVar("BorghertzAlreadyActiveWithJob")
     local illusionCooldown  = npc:getLocalVar("illusionCooldown")
@@ -1514,9 +1524,9 @@ xi.treasure.onTrade = function(player, npc, trade, chestType)
 
     player:confirmTrade()
     if chestType == xi.treasure.type.CHEST then
-        npc:setLocalVar("illusionCooldown", os.time() + math.random(xi.settings.CHEST_MIN_ILLUSION_TIME, xi.settings.CHEST_MAX_ILLUSION_TIME))
+        npc:setLocalVar("illusionCooldown", os.time() + math.random(xi.settings.main.CHEST_MIN_ILLUSION_TIME, xi.settings.main.CHEST_MAX_ILLUSION_TIME))
     else
-        npc:setLocalVar("illusionCooldown", os.time() + math.random(xi.settings.COFFER_MIN_ILLUSION_TIME, xi.settings.COFFER_MAX_ILLUSION_TIME))
+        npc:setLocalVar("illusionCooldown", os.time() + math.random(xi.settings.main.COFFER_MIN_ILLUSION_TIME, xi.settings.main.COFFER_MAX_ILLUSION_TIME))
     end
     moveChest(npc, zoneId, chestType)
 end
@@ -1524,7 +1534,7 @@ end
 xi.treasure.onTrigger = function(player, chestType)
     local zoneId = player:getZoneID()
     local msgBase = zones[zoneId].text.CHEST_UNLOCKED
-    local info = treasureInfo[chestType].zone[zoneId]
+    local info = xi.treasure.treasureInfo[chestType].zone[zoneId]
 
     player:messageSpecial(msgBase + 7, info.key)
 end

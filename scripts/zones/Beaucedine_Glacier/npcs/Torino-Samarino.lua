@@ -6,7 +6,7 @@
 -- !pos 105 -20 140 111
 -----------------------------------
 require("scripts/globals/quests")
-require("scripts/settings/main")
+require("scripts/globals/settings")
 local ID = require("scripts/zones/Beaucedine_Glacier/IDs")
 require("scripts/globals/keyitems")
 require("scripts/globals/npc_util")
@@ -18,15 +18,13 @@ entity.onTrade = function(player, npc, trade)
 end
 
 entity.onTrigger = function(player, npc)
-    local FoiledAGolem = player:getQuestStatus(xi.quest.log_id.WINDURST, xi.quest.id.windurst.CURSES_FOILED_A_GOLEM)
+    local foiledAGolem = player:getQuestStatus(xi.quest.log_id.WINDURST, xi.quest.id.windurst.CURSES_FOILED_A_GOLEM)
     local tuningOutProgress = player:getCharVar("TuningOut_Progress")
-    local copMission = player:getCurrentMission(COP)
-    local copStatus = player:getCharVar("PromathiaStatus")
 
     -- QUEST: CURSES, FOILED A-GOLEM!?
-    if player:hasKeyItem(xi.ki.SHANTOTTOS_EX_SPELL) and FoiledAGolem == QUEST_ACCEPTED then
+    if player:hasKeyItem(xi.ki.SHANTOTTOS_EX_SPELL) and foiledAGolem == QUEST_ACCEPTED then
         player:startEvent(108) -- key item taken, wait one game day for new spell
-    elseif player:getCharVar("golemwait") == 1 and FoiledAGolem == QUEST_ACCEPTED then
+    elseif player:getCharVar("golemwait") == 1 and foiledAGolem == QUEST_ACCEPTED then
         local gDay = VanadielDayOfTheYear()
         local gYear = VanadielYear()
         local dFinished = player:getCharVar("golemday")
@@ -36,7 +34,7 @@ entity.onTrigger = function(player, npc)
         elseif (gDay == dFinished + 1 and gYear == yFinished) then
             player:startEvent(109) -- re-write done
         end
-    elseif FoiledAGolem == QUEST_ACCEPTED then
+    elseif foiledAGolem == QUEST_ACCEPTED then
         if player:hasKeyItem(xi.ki.SHANTOTTOS_NEW_SPELL) then
             player:startEvent(105)
         elseif player:getCharVar("foiledagolemdeliverycomplete") == 1 then
@@ -50,10 +48,6 @@ entity.onTrigger = function(player, npc)
         player:startEvent(207) -- Ildy meets up with Rhinostery peers
     elseif tuningOutProgress == 8 then
         player:startEvent(208) -- Talks about Ildy being passionate about his work
-
-    -- CoP 5-2: DESIRES OF EMPTINESS
-    elseif copStatus > 8 and copMission == xi.mission.id.cop.DESIRES_OF_EMPTINESS then
-        player:startEvent(211)
 
     -- DEFAULT DIALOG
     else

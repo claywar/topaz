@@ -2,8 +2,8 @@
 -- Area: Nyzul Isle (Path of Darkness)
 --  Mob: Imperial Gear
 -----------------------------------
-local ID = require("scripts/zones/Nyzul_Isle/IDs")
-require("scripts/globals/status")
+local ID = require('scripts/zones/Nyzul_Isle/IDs')
+require('scripts/globals/status')
 -----------------------------------
 local entity = {}
 

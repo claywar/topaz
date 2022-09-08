@@ -70,11 +70,13 @@ public:
     CStatusEffect* GetStatusEffect(EFFECT StatusID);
     CStatusEffect* GetStatusEffect(EFFECT StatusID, uint32 SubID);
 
-    uint8 GetStatusEffectCountInIDRange(EFFECT start, EFFECT end);
+    std::vector<EFFECT> GetStatusEffectsInIDRange(EFFECT start, EFFECT end);
+
+    uint8  GetStatusEffectCountInIDRange(EFFECT start, EFFECT end);
     EFFECT GetNewestStatusEffectInIDRange(EFFECT start, EFFECT end);
-    void  RemoveOldestStatusEffectInIDRange(EFFECT start, EFFECT end);
-    void  RemoveNewestStatusEffectInIDRange(EFFECT start, EFFECT end);
-    void  RemoveAllStatusEffectsInIDRange(EFFECT start, EFFECT end);
+    void   RemoveOldestStatusEffectInIDRange(EFFECT start, EFFECT end);
+    void   RemoveNewestStatusEffectInIDRange(EFFECT start, EFFECT end);
+    void   RemoveAllStatusEffectsInIDRange(EFFECT start, EFFECT end);
 
     void UpdateStatusIcons(); // пересчитываем иконки эффектов
     void CheckEffectsExpiry(time_point tick);
@@ -97,12 +99,14 @@ public:
     void  RemoveOldestManeuver();
     void  RemoveAllManeuvers();
 
-    uint8 GetActiveRuneCount();
+    std::vector<EFFECT> GetAllRuneEffects();
+
+    uint8  GetActiveRuneCount();
     EFFECT GetHighestRuneEffect();
     EFFECT GetNewestRuneEffect();
-    void  RemoveOldestRune();
-    void  RemoveNewestRune();
-    void  RemoveAllRunes();
+    void   RemoveOldestRune();
+    void   RemoveNewestRune();
+    void   RemoveAllRunes();
 
     void WakeUp(); // remove sleep effects
     bool IsAsleep();

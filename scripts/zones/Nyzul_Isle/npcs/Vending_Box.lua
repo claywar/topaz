@@ -115,7 +115,7 @@ end
 
 entity.onTrigger = function(player, npc)
     local preferred = player:getVar("[Nyzul]preferredItems")
-	local tokens    = player:getCurrency("nyzul_isle_assault_point")
+    local tokens    = player:getCurrency("nyzul_isle_assault_point")
 
     player:startEvent(202, 1, tokens, playerHasTempItem(player), preferred, 100, 200, 300)
 end

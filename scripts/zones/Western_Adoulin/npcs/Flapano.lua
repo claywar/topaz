@@ -20,8 +20,8 @@ entity.onTrade = function(player, npc, trade)
 
     -- ALL THE WAY TO THE BANK
     if (player:hasKeyItem(xi.ki.TARUTARU_SAUCE_INVOICE) and npcUtil.tradeHas( trade, {{"gil", 5600}} )) then
-        local ATWTTB_Paid_Flapano = utils.mask.getBit(player:getCharVar("ATWTTB_Payments"), 2)
-        if (not ATWTTB_Paid_Flapano) then
+        local paidFlapano = utils.mask.getBit(player:getCharVar("ATWTTB_Payments"), 2)
+        if (not paidFlapano) then
             player:startEvent(5071)
         end
 
@@ -91,7 +91,7 @@ entity.onEventFinish = function(player, csid, option)
     elseif (csid == 2860 and option == 1) then
         player:addQuest(xi.quest.log_id.ADOULIN, xi.quest.id.adoulin.EXOTIC_DELICACIES)
     elseif (csid == 2861) then
-        if (npcUtil.completeQuest(player, ADOULIN, xi.quest.id.adoulin.EXOTIC_DELICACIES, {bayld=500, item=5975, xp=1000})) then
+        if (npcUtil.completeQuest(player, xi.quest.log_id.ADOULIN, xi.quest.id.adoulin.EXOTIC_DELICACIES, {bayld=500, item=5975, xp=1000})) then
             player:confirmTrade()
             player:setCharVar("Flapano_Odd_Even", 0)
         end

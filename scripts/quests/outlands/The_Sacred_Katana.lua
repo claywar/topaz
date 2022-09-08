@@ -10,7 +10,7 @@ require('scripts/globals/items')
 require('scripts/globals/keyitems')
 require('scripts/globals/npc_util')
 require('scripts/globals/quests')
-require('scripts/settings/main')
+require('scripts/globals/settings')
 require('scripts/globals/titles')
 require('scripts/globals/zone')
 require('scripts/globals/interaction/quest')
@@ -23,7 +23,7 @@ local quest = Quest:new(xi.quest.log_id.OUTLANDS, xi.quest.id.outlands.THE_SACRE
 quest.reward =
 {
     fame = 20,
-    fameArea = NORG,
+    fameArea = xi.quest.fame_area.NORG,
     item = xi.items.MAGOROKU,
 }
 
@@ -34,7 +34,7 @@ quest.sections =
             return status == QUEST_AVAILABLE and
                 player:hasCompletedQuest(xi.quest.log_id.OUTLANDS, xi.quest.id.outlands.FORGE_YOUR_DESTINY) and
                 player:getMainJob() == xi.job.SAM and
-                player:getMainLvl() >= xi.settings.AF1_QUEST_LEVEL
+                player:getMainLvl() >= xi.settings.main.AF1_QUEST_LEVEL
         end,
 
         [xi.zone.NORG] =

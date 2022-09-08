@@ -3,9 +3,9 @@
 -- Area: Nyzul Isle
 -- Info: Floor 60 80 and 100 Boss
 -----------------------------------
-mixins = { require("scripts/mixins/nyzul_boss_drops") }
-require("scripts/globals/nyzul")
-require("scripts/globals/status")
+mixins = { require('scripts/mixins/nyzul_boss_drops') }
+require('scripts/globals/nyzul')
+require('scripts/globals/status')
 -----------------------------------
 local entity = {}
 
@@ -54,8 +54,8 @@ entity.onMobFight = function(mob, target)
 end
 
 entity.onCriticalHit = function(mob)
-    local rand       = math.random(1, 100)
-    local broken     = mob:getAnimationSub()
+    local rand   = math.random(1, 100)
+    local broken = mob:getAnimationSub()
 
     if rand <= 15 and broken < 2 then
         mob:setAnimationSub(broken + 1)

@@ -4,7 +4,7 @@
 -- Starts and Ends Quest: It's Not Your Vault
 -----------------------------------
 local ID = require("scripts/zones/Norg/IDs")
-require("scripts/settings/main")
+require("scripts/globals/settings")
 require("scripts/globals/keyitems")
 require("scripts/globals/quests")
 -----------------------------------
@@ -77,19 +77,19 @@ entity.onTrade = function(player, npc, trade)
 end
 
 entity.onTrigger = function(player, npc)
-    local Vault = player:getQuestStatus(xi.quest.log_id.OUTLANDS, xi.quest.id.outlands.ITS_NOT_YOUR_VAULT)
+    local vault = player:getQuestStatus(xi.quest.log_id.OUTLANDS, xi.quest.id.outlands.ITS_NOT_YOUR_VAULT)
     local mLvl = player:getMainLvl()
-    local IronBox = player:hasKeyItem(xi.ki.SEALED_IRON_BOX)
+    local ironBox = player:hasKeyItem(xi.ki.SEALED_IRON_BOX)
 
-    if Vault == QUEST_AVAILABLE and player:getFameLevel(NORG) >= 3 and mLvl >= 5 then
+    if vault == QUEST_AVAILABLE and player:getFameLevel(xi.quest.fame_area.NORG) >= 3 and mLvl >= 5 then
         player:startEvent(36, xi.ki.SEALED_IRON_BOX) -- Start quest
-    elseif Vault == QUEST_ACCEPTED then
-        if (IronBox == true) then
+    elseif vault == QUEST_ACCEPTED then
+        if (ironBox == true) then
             player:startEvent(38) -- Finish quest
         else
             player:startEvent(37, xi.ki.MAP_OF_SEA_SERPENT_GROTTO) -- Reminder/Directions Dialogue
         end
-    elseif Vault == QUEST_COMPLETED then
+    elseif vault == QUEST_COMPLETED then
         player:startEvent(39) -- New Standard Dialogue for everyone who has completed the quest
     else
         player:startEvent(89) -- Standard Conversation
@@ -109,7 +109,7 @@ entity.onEventFinish = function(player, csid, option, npc)
             player:delKeyItem(xi.ki.SEALED_IRON_BOX)
             player:addItem(4961) -- Scroll of Tonko: Ichi
             player:messageSpecial(ID.text.ITEM_OBTAINED, 4961)
-            player:addFame(NORG, 50)
+            player:addFame(xi.quest.fame_area.NORG, 50)
             player:completeQuest(xi.quest.log_id.OUTLANDS, xi.quest.id.outlands.ITS_NOT_YOUR_VAULT)
         end
     end

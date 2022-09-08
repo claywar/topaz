@@ -42,11 +42,13 @@ public:
 
     auto getLocalVar(const char* key);
     void setLocalVar(const char* key, uint32 value);
+    void resetLocalVars();
 
     void        registerRegion(uint32 RegionID, float x1, float y1, float z1, float x2, float y2, float z2);
     sol::object levelRestriction();
     auto        getPlayers() -> sol::table;
     auto        getNPCs() -> sol::table;
+    auto        getMobs() -> sol::table;
     ZONEID      getID();
     std::string getName();
     REGION_TYPE getRegionID();
@@ -55,8 +57,8 @@ public:
     bool        battlefieldsFull(int battlefieldId);
     WEATHER     getWeather();
     void        reloadNavmesh();
-
-    auto insertDynamicEntity(sol::table table) -> std::optional<CLuaBaseEntity>;
+    bool        isNavigablePoint(const sol::table& position);
+    auto        insertDynamicEntity(sol::table table) -> std::optional<CLuaBaseEntity>;
 
     auto getSoloBattleMusic();
     auto getPartyBattleMusic();

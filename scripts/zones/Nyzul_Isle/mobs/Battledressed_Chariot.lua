@@ -3,8 +3,8 @@
 -- Area: Nyzul Isle
 -- Info: Enemy Leader, Uses Discoid
 -----------------------------------
-mixins = {require("scripts/mixins/families/chariot")}
-require("scripts/globals/nyzul")
+mixins = { require('scripts/mixins/families/chariot') }
+require('scripts/globals/nyzul')
 -----------------------------------
 local entity = {}
 

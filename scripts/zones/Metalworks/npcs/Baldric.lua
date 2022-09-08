@@ -4,7 +4,7 @@
 -- Type: Quest Giver
 -- !pos -50.858 1.777 -31.141 237
 -----------------------------------
-require("scripts/settings/main")
+require("scripts/globals/settings")
 require("scripts/globals/quests")
 local ID = require("scripts/zones/Metalworks/IDs")
 -----------------------------------
@@ -22,7 +22,7 @@ end
 
 entity.onTrigger = function(player, npc)
 
-    if (player:getQuestStatus(xi.quest.log_id.BASTOK, xi.quest.id.bastok.STARDUST) == QUEST_AVAILABLE and player:getFameLevel(BASTOK) >= 2) then
+    if (player:getQuestStatus(xi.quest.log_id.BASTOK, xi.quest.id.bastok.STARDUST) == QUEST_AVAILABLE and player:getFameLevel(xi.quest.fame_area.BASTOK) >= 2) then
         player:startEvent(554)
     else
         player:startEvent(552)
@@ -38,8 +38,8 @@ entity.onEventFinish = function(player, csid, option)
         player:addQuest(xi.quest.log_id.BASTOK, xi.quest.id.bastok.STARDUST)
     elseif (csid == 555) then
         player:tradeComplete()
-        player:addGil(xi.settings.GIL_RATE * 300)
-        player:messageSpecial(ID.text.GIL_OBTAINED, xi.settings.GIL_RATE * 300)
+        player:addGil(xi.settings.main.GIL_RATE * 300)
+        player:messageSpecial(ID.text.GIL_OBTAINED, xi.settings.main.GIL_RATE * 300)
         player:completeQuest(xi.quest.log_id.BASTOK, xi.quest.id.bastok.STARDUST)
     end
 end

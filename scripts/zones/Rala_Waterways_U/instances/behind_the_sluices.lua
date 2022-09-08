@@ -83,7 +83,7 @@ instance_object.onInstanceTimeUpdate = function(instance, elapsed)
                 instance:complete()
             end
 
-            local MISTDAGGER_ID = ID.mob.ARCIELA_BTS + 2
+            local mistDaggerID = ID.mob.ARCIELA_BTS + 2
 
             local wsState = mob:getLocalVar('CUSTOM_WS_STATE')
             switch (wsState): caseof
@@ -94,7 +94,7 @@ instance_object.onInstanceTimeUpdate = function(instance, elapsed)
                     local target = mob:getTarget()
                     if target and mob:getTP() >= 1000 then
                         -- Turn off Mistdaggers STANDBACK
-                        if mob:getID() == MISTDAGGER_ID then
+                        if mob:getID() == mistDaggerID then
                             mob:setMobMod(xi.mobMod.HP_STANDBACK, 0)
                         end
 
@@ -120,7 +120,7 @@ instance_object.onInstanceTimeUpdate = function(instance, elapsed)
                         mob:setLocalVar('CUSTOM_WS_STATE', 0)
 
                         -- Reset Mistdaggers STANDBACK
-                        if mob:getID() == MISTDAGGER_ID then
+                        if mob:getID() == mistDaggerID then
                             mob:setMobMod(xi.mobMod.HP_STANDBACK, 100)
                         end
                     end
@@ -149,7 +149,7 @@ instance_object.onInstanceComplete = function(instance)
     for i, v in pairs(chars) do
         v:startEvent(1000)
 
-        local onThisMission = v:getCurrentMission(SOA) == xi.mission.id.soa.BEHIND_THE_SLUICES
+        local onThisMission = v:getCurrentMission(xi.mission.log_id.SOA) == xi.mission.id.soa.BEHIND_THE_SLUICES
         local onThisFight = v:getMissionStatus(xi.mission.log_id.SOA) == 2
         if onThisMission and onThisFight then
             v:setMissionStatus(xi.mission.log_id.SOA, 3)

@@ -3,9 +3,9 @@
 -- Area: Nyzul Isle
 -- Info: Enemy Leader, Absorbs fire elemental damage, Highly resistant to silence, Gains regain at 50% HP
 -----------------------------------
-mixins = {require("scripts/mixins/families/flan")}
-require("scripts/globals/status")
-require("scripts/globals/nyzul")
+mixins = { require('scripts/mixins/families/flan') }
+require('scripts/globals/status')
+require('scripts/globals/nyzul')
 -----------------------------------
 local entity = {}
 

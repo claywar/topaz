@@ -5,7 +5,7 @@
 -- !pos 38 .1 14 234
 -----------------------------------
 local ID = require("scripts/zones/Bastok_Mines/IDs")
-require("scripts/settings/main")
+require("scripts/globals/settings")
 require("scripts/globals/quests")
 require("scripts/globals/titles")
 require("scripts/globals/utils")
@@ -24,20 +24,11 @@ entity.onTrade = function(player, npc, trade)
 end
 
 entity.onTrigger = function(player, npc)
-    local WildcatBastok = player:getCharVar("WildcatBastok")
-
     if
-        player:getQuestStatus(xi.quest.log_id.BASTOK, xi.quest.id.bastok.LURE_OF_THE_WILDCAT) == QUEST_ACCEPTED and
-        not utils.mask.getBit(WildcatBastok, 16)
-    then
-        player:startEvent(506)
-
-    elseif
         player:getQuestStatus(xi.quest.log_id.BASTOK, xi.quest.id.bastok.VENGEFUL_WRATH) == QUEST_AVAILABLE and
-        player:getFameLevel(BASTOK) >= 3
+        player:getFameLevel(xi.quest.fame_area.BASTOK) >= 3
     then
         player:startEvent(106)
-
     else
         player:startEvent(105)
     end
@@ -49,22 +40,18 @@ end
 entity.onEventFinish = function(player, csid, option)
     if csid == 106 then
         player:addQuest(xi.quest.log_id.BASTOK, xi.quest.id.bastok.VENGEFUL_WRATH)
-
     elseif csid == 107 then
         if player:getQuestStatus(xi.quest.log_id.BASTOK, xi.quest.id.bastok.VENGEFUL_WRATH) == QUEST_ACCEPTED then
             player:addTitle(xi.title.AVENGER)
-            player:addFame(BASTOK, 120)
+            player:addFame(xi.quest.fame_area.BASTOK, 120)
         else
-            player:addFame(BASTOK, 8)
+            player:addFame(xi.quest.fame_area.BASTOK, 8)
         end
 
         player:tradeComplete()
-        player:addGil(xi.settings.GIL_RATE * 900)
-        player:messageSpecial(ID.text.GIL_OBTAINED, xi.settings.GIL_RATE * 900)
+        player:addGil(xi.settings.main.GIL_RATE * 900)
+        player:messageSpecial(ID.text.GIL_OBTAINED, xi.settings.main.GIL_RATE * 900)
         player:completeQuest(xi.quest.log_id.BASTOK, xi.quest.id.bastok.VENGEFUL_WRATH) -- for save fame
-
-    elseif csid == 506 then
-        player:setCharVar("WildcatBastok", utils.mask.setBit(player:getCharVar("WildcatBastok"), 16, true))
     end
 end
 

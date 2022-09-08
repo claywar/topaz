@@ -22,13 +22,16 @@ g_mixins.dynamis_dreamland = function(dynamisDreamlandMob)
             [1452] = {16, 24},
             [1455] = {8, 16},
         },
+
         Magic =
         {
             [1449] = {8, 16},
             [1452] = {0, 8},
             [1455] = {16, 24},
         },
-        JA = {
+
+        JA =
+        {
             [1449] = {16, 24},
             [1452] = {8, 16},
             [1455] = {0, 8},
@@ -62,7 +65,7 @@ g_mixins.dynamis_dreamland = function(dynamisDreamlandMob)
                 )
             )
         then
-            dynamis.procMonster(target, caster)
+            xi.dynamis.procMonster(target, caster)
         end
     end)
 
@@ -81,7 +84,7 @@ g_mixins.dynamis_dreamland = function(dynamisDreamlandMob)
                 )
             )
         then
-            dynamis.procMonster(target, user)
+            xi.dynamis.procMonster(target, user)
         end
     end)
 
@@ -100,7 +103,7 @@ g_mixins.dynamis_dreamland = function(dynamisDreamlandMob)
                 )
             )
         then
-            dynamis.procMonster(target, user)
+            xi.dynamis.procMonster(target, user)
         end
     end)
 

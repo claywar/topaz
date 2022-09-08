@@ -3,9 +3,9 @@
 -- Area: Nyzul Isle
 -- Info: Enemy Leader, Absorbs ice elemental damage
 -----------------------------------
-mixins = {require("scripts/mixins/families/flan")}
-require("scripts/globals/status")
-require("scripts/globals/nyzul")
+mixins = { require('scripts/mixins/families/flan') }
+require('scripts/globals/status')
+require('scripts/globals/nyzul')
 -----------------------------------
 local entity = {}
 

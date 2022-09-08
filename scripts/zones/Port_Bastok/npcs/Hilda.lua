@@ -24,17 +24,13 @@ entity.onTrade = function(player, npc, trade)
 end
 
 entity.onTrigger = function(player, npc)
-    local WildcatBastok = player:getCharVar("WildcatBastok")
-
-    if player:getQuestStatus(xi.quest.log_id.BASTOK, xi.quest.id.bastok.LURE_OF_THE_WILDCAT) == QUEST_ACCEPTED and not utils.mask.getBit(WildcatBastok, 3) then
-        player:startEvent(356)
-    elseif player:getQuestStatus(xi.quest.log_id.BASTOK, xi.quest.id.bastok.THE_USUAL) ~= QUEST_COMPLETED then
+    if player:getQuestStatus(xi.quest.log_id.BASTOK, xi.quest.id.bastok.THE_USUAL) ~= QUEST_COMPLETED then
         if player:getQuestStatus(xi.quest.log_id.BASTOK, xi.quest.id.bastok.CID_S_SECRET) == QUEST_ACCEPTED then
             player:startEvent(132)
             if player:getCharVar("CidsSecret_Event") ~= 1 then
                 player:setCharVar("CidsSecret_Event", 1)
             end
-        elseif player:getFameLevel(BASTOK) >= 5 and player:getQuestStatus(xi.quest.log_id.BASTOK, xi.quest.id.bastok.CID_S_SECRET) == QUEST_COMPLETED then
+        elseif player:getFameLevel(xi.quest.fame_area.BASTOK) >= 5 and player:getQuestStatus(xi.quest.log_id.BASTOK, xi.quest.id.bastok.CID_S_SECRET) == QUEST_COMPLETED then
             if player:getCharVar("TheUsual_Event") == 1 then
                 player:startEvent(136)
             elseif (player:getQuestStatus(xi.quest.log_id.BASTOK, xi.quest.id.bastok.THE_USUAL) == QUEST_ACCEPTED) then
@@ -77,11 +73,9 @@ entity.onEventFinish = function(player, csid, option)
             player:setCharVar("TheUsual_Event", 0)
             player:addItem(17170)
             player:messageSpecial(ID.text.ITEM_OBTAINED, 17170) -- Speed Bow
-            player:addFame(BASTOK, 30)
+            player:addFame(xi.quest.fame_area.BASTOK, 30)
             player:completeQuest(xi.quest.log_id.BASTOK, xi.quest.id.bastok.THE_USUAL)
         end
-    elseif csid == 356 then
-        player:setCharVar("WildcatBastok", utils.mask.setBit(player:getCharVar("WildcatBastok"), 3, true))
     end
 end
 

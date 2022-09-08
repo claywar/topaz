@@ -2,8 +2,8 @@
 -- Area: Nyzul Isle (Nashmeira's Plea)
 --  Mob: Raubahn
 -----------------------------------
-local ID = require("scripts/zones/Nyzul_Isle/IDs")
-require("scripts/globals/status")
+local ID = require('scripts/zones/Nyzul_Isle/IDs')
+require('scripts/globals/status')
 -----------------------------------
 local entity = {}
 
@@ -29,7 +29,7 @@ entity.onMobSpawn = function(mob)
             local target   = mobArg:getTarget()
             local targetid = 0
 
-            if target then targetid = target:getShortID() end
+            if target then targetid = target:getTargID() end
 
             mobArg:timer(12000, function(mobTimerArg)
                 mobTimerArg:setHP(mobTimerArg:getMaxHP())
@@ -62,8 +62,8 @@ entity.onMobSpawn = function(mob)
                         job == 1 or
                         job == 2 or
                         (job >= 6 and job <= 10) or
-                        (job >=12 and job <=14) or
-                        (job >= 16 and job <=19)
+                        (job >= 12 and job <= 14) or
+                        (job >= 16 and job <= 19)
                     then
                         phys = phys + 1
                     elseif

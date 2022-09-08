@@ -6,7 +6,10 @@
 //==========================================
 #include "WheatyExceptionReport.h"
 
+// clang-format off
+
 #include <algorithm>
+#include <array>
 #include <string>
 
 #include "cbasetypes.h"
@@ -92,12 +95,15 @@ WheatyExceptionReport::WheatyExceptionReport() // Constructor
     alreadyCrashed = false;
     RtlGetVersion = (pRtlGetVersion)GetProcAddress(GetModuleHandle(_T("ntdll.dll")), "RtlGetVersion");
 
-    _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
-    _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDERR);
-    _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_FILE);
-    _CrtSetReportFile(_CRT_ERROR, _CRTDBG_FILE_STDERR);
-    _CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_FILE);
-    _CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDERR);
+    if (!IsDebuggerPresent())
+    {
+        _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
+        _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDERR);
+        _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_FILE);
+        _CrtSetReportFile(_CRT_ERROR, _CRTDBG_FILE_STDERR);
+        _CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_FILE);
+        _CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDERR);
+    }
 }
 
 //============
@@ -148,10 +154,43 @@ const char* GetMemoryUsageString()
 LONG WINAPI WheatyExceptionReport::WheatyUnhandledExceptionFilter(
     PEXCEPTION_POINTERS pExceptionInfo)
 {
+    // https://www.freelists.org/post/luajit/FirstChance-Exception-in-luajit,1
+    // https://love2d.org/forums/viewtopic.php?t=84336
+    switch (pExceptionInfo->ExceptionRecord->ExceptionCode)
+    {
+       // LuaJIT throws and handles exceptions as part of its regular runtime.
+       // We should ignore these. By using Sol, there is no scenario where we want a Lua error to be fatal.
+       // The LuaJIT exception codes are all built by OR-ing 0xE24C4A00 with the relevant Lua error codes:
+       // https://github.com/LuaJIT/LuaJIT/blob/4deb5a1588ed53c0c578a343519b5ede59f3d928/src/lj_err.c#L250-L256
+       // https://github.com/LuaJIT/LuaJIT/blob/20f556e53190ab9a735b932f5d868d45ec536a70/src/lua.h#L42-L48
+        case 0xE24C4A00: // LUA_OK (0)
+            [[fallthrough]];
+        case 0xE24C4A01: // LUA_YIELD (1)
+            [[fallthrough]];
+        case 0xE24C4A02: // LUA_ERRRUN (2)
+            [[fallthrough]];
+        case 0xE24C4A03: // LUA_ERRSYNTAX (3)
+            [[fallthrough]];
+        case 0xE24C4A04: // LUA_ERRMEM (4)
+            [[fallthrough]];
+        case 0xE24C4A05: // LUA_ERRERR (5)
+            return EXCEPTION_CONTINUE_SEARCH;
+
+        // Exceptions thrown internally (like is possible in AI state transitions) should also be ignored
+        case 0xE06D7363: // Internal application exception code
+            return EXCEPTION_CONTINUE_SEARCH;
+
+        default:
+            break;
+    }
+
     std::unique_lock<std::mutex> guard(alreadyCrashedLock);
+
     // Handle only 1 exception in the whole process lifetime
     if (alreadyCrashed)
+    {
         return EXCEPTION_EXECUTE_HANDLER;
+    }
 
     alreadyCrashed = true;
 
@@ -163,7 +202,12 @@ LONG WINAPI WheatyExceptionReport::WheatyUnhandledExceptionFilter(
     GetModuleFileName(nullptr, module_folder_name, MAX_PATH);
     TCHAR* pos = _tcsrchr(module_folder_name, '\\');
     if (!pos)
-        return 0;
+    {
+        Log(_T("GetModuleFileName failed"));
+        TerminateProcess(GetCurrentProcess(), 1);
+        return EXCEPTION_EXECUTE_HANDLER; // Unreacheable code
+    }
+
     pos[0] = '\0';
     ++pos;
 
@@ -172,7 +216,11 @@ LONG WINAPI WheatyExceptionReport::WheatyUnhandledExceptionFilter(
     if (!CreateDirectory(crash_folder_path, nullptr))
     {
         if (GetLastError() != ERROR_ALREADY_EXISTS)
-            return 0;
+        {
+            Log(_T("CreateDirectory failed"));
+            TerminateProcess(GetCurrentProcess(), 1);
+            return EXCEPTION_EXECUTE_HANDLER; // Unreacheable code
+        }
     }
 
     SYSTEMTIME systime;
@@ -207,7 +255,7 @@ LONG WINAPI WheatyExceptionReport::WheatyUnhandledExceptionFilter(
         {
             additionalStream.Type = CommentStreamA;
             additionalStream.Buffer = reinterpret_cast<PVOID>(pExceptionInfo->ExceptionRecord->ExceptionInformation[0]);
-            additionalStream.BufferSize = strlen(reinterpret_cast<char const*>(pExceptionInfo->ExceptionRecord->ExceptionInformation[0])) + 1;
+            additionalStream.BufferSize = static_cast<ULONG>(strlen(reinterpret_cast<char const*>(pExceptionInfo->ExceptionRecord->ExceptionInformation[0])) + 1);
 
             additionalStreamInfo.UserStreamArray = &additionalStream;
             additionalStreamInfo.UserStreamCount = 1;
@@ -217,7 +265,6 @@ LONG WINAPI WheatyExceptionReport::WheatyUnhandledExceptionFilter(
             m_hDumpFile, MiniDumpWithIndirectlyReferencedMemory, &info, &additionalStreamInfo, nullptr);
 
         CloseHandle(m_hDumpFile);
-
     }
 
     if (m_hReportFile)
@@ -266,15 +313,15 @@ LONG WINAPI WheatyExceptionReport::WheatyUnhandledExceptionFilter(
         Log(_T(fmt::format("Time of crash: {:%Y/%m/%d %H:%M:%S}", fmt::localtime(t)).c_str()));
 
         GenerateExceptionReport(pExceptionInfo);
-
-        fclose(m_hReportFile);
-        m_hReportFile = nullptr;
     }
 
-    if (m_previousFilter)
-        return m_previousFilter(pExceptionInfo);
-    else
-        return EXCEPTION_EXECUTE_HANDLER/*EXCEPTION_CONTINUE_SEARCH*/;
+    Log(_T(fmt::format("WheatyUnhandledExceptionFilter Exit").c_str()));
+
+    fclose(m_hReportFile);
+    m_hReportFile = nullptr;
+
+    TerminateProcess(GetCurrentProcess(), 1);
+    return EXCEPTION_EXECUTE_HANDLER; // Unreacheable code
 }
 
 void __cdecl WheatyExceptionReport::WheatyCrtHandler(wchar_t const* /*expression*/, wchar_t const* /*function*/, wchar_t const* /*file*/, unsigned int /*line*/, uintptr_t /*pReserved*/)
@@ -285,26 +332,37 @@ void __cdecl WheatyExceptionReport::WheatyCrtHandler(wchar_t const* /*expression
 BOOL WheatyExceptionReport::_GetProcessorName(TCHAR* sProcessorName, DWORD maxcount)
 {
     if (!sProcessorName)
+    {
         return FALSE;
+    }
 
     HKEY hKey;
     LONG lRet;
     lRet = ::RegOpenKeyEx(HKEY_LOCAL_MACHINE, _T("HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0"),
         0, KEY_QUERY_VALUE, &hKey);
     if (lRet != ERROR_SUCCESS)
+    {
         return FALSE;
+    }
+
     TCHAR szTmp[2048];
     DWORD cntBytes = sizeof(szTmp);
     lRet = ::RegQueryValueEx(hKey, _T("ProcessorNameString"), nullptr, nullptr,
         (LPBYTE)szTmp, &cntBytes);
     if (lRet != ERROR_SUCCESS)
+    {
         return FALSE;
+    }
+
     ::RegCloseKey(hKey);
     sProcessorName[0] = '\0';
     // Skip spaces
     TCHAR* psz = szTmp;
     while (iswspace(*psz))
+    {
         ++psz;
+    }
+
     _tcsncpy(sProcessorName, psz, maxcount);
     return TRUE;
 }
@@ -504,7 +562,7 @@ void WheatyExceptionReport::PrintSystemInfo()
     MemoryStatus.dwLength = sizeof (MEMORYSTATUS);
     ::GlobalMemoryStatus(&MemoryStatus);
     TCHAR sString[1024];
-    if (_GetProcessorName(sString, std::size(sString)))
+    if (_GetProcessorName(sString, static_cast<DWORD>(std::size(sString))))
     {
         Log(_T("Processor: %s"), sString);
         Log(_T("Number Of Threads: %d"), SystemInfo.dwNumberOfProcessors);
@@ -515,7 +573,7 @@ void WheatyExceptionReport::PrintSystemInfo()
             SystemInfo.dwNumberOfProcessors);
     }
 
-    if (_GetWindowsVersion(sString, std::size(sString)))
+    if (_GetWindowsVersion(sString, static_cast<DWORD>(std::size(sString))))
         Log(_T("OS: %s"), sString);
     else
         Log(_T("OS: <unknown>"));
@@ -629,7 +687,7 @@ PEXCEPTION_POINTERS pExceptionInfo)
         // Initialize DbgHelp
         if (!SymInitialize(GetCurrentProcess(), nullptr, TRUE))
         {
-            Log(_T("CRITICAL ERROR. Couldn't initialize the symbol handler for process.Error [%s]."),
+            Log(_T("CRITICAL ERROR. Couldn't initialize the symbol handler for process. Error: %s."),
                 ErrorMessage(GetLastError()));
         }
 
@@ -944,9 +1002,8 @@ bool bWriteVariables, HANDLE pThreadHandle)                                     
             wsprintf((LPSTR)fileNameBuffer.data(), "%s, line %i", lineInfo.FileName, lineInfo.LineNumber);
         }
 
-
 #ifdef _M_IX86
-        Log(_T("%08X  %08X  %s (%s)"), sf.AddrPC.Offset, sf.AddrFrame.Offset, funcNameBuffer.data(), fileNameBuffer.data());
+        Log(_T("%08X  %08X  %s (%s)"), (DWORD)sf.AddrPC.Offset, (DWORD)sf.AddrFrame.Offset, funcNameBuffer.data(), fileNameBuffer.data());
 #endif
 #ifdef _M_X64
         Log(_T("%016I64X  %016I64X  %s (%s)"), sf.AddrPC.Offset, sf.AddrFrame.Offset, funcNameBuffer.data(), fileNameBuffer.data());
@@ -1332,7 +1389,7 @@ bool logChildren)
     // TI_FINDCHILDREN_PARAMS struct has.  Use derivation to accomplish this.
     struct FINDCHILDREN : TI_FINDCHILDREN_PARAMS
     {
-        ULONG   MoreChildIds[1024*2];
+        ULONG   MoreChildIds[1024*2] = {};
         FINDCHILDREN(){Count = sizeof(MoreChildIds) / sizeof(MoreChildIds[0]);}
     } children;
 
@@ -1566,11 +1623,11 @@ int __cdecl WheatyExceptionReport::Log(const TCHAR* format, ...)
         // Log to console
         if (gLogToConsole)
         {
-            ShowStacktrace(outString.c_str());
+            ShowCritical(outString.c_str());
         }
     }
 
-    return 0;
+    return EXCEPTION_EXECUTE_HANDLER;
 }
 
 bool WheatyExceptionReport::StoreSymbol(DWORD type, DWORD_PTR offset)
@@ -1632,3 +1689,5 @@ std::string SymbolDetail::ToString()
     }
     return formatted;
 }
+
+// clang-format on

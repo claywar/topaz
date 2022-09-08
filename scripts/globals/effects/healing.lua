@@ -2,8 +2,9 @@
 -- xi.effect.HEALING
 -- Activated through the /heal command
 -----------------------------------
+require("scripts/globals/abyssea")
 require("scripts/globals/keyitems")
-require("scripts/settings/main")
+require("scripts/globals/settings")
 require("scripts/globals/quests")
 require("scripts/globals/status")
 require("scripts/globals/zone")
@@ -15,13 +16,26 @@ local effect_object = {}
 effect_object.onEffectGain = function(target, effect)
     target:setAnimation(33)
 
+    -- Abyssea Lights and time remaining check
+    if
+        target:isPC() and
+        xi.abyssea.isInAbysseaZone(target)
+    then
+        local visitantEffect = target:getStatusEffect(xi.effect.VISITANT)
+
+        if visitantEffect and visitantEffect:getIcon() == xi.effect.VISITANT then
+            xi.abyssea.displayTimeRemaining(target)
+            xi.abyssea.displayAbysseaLights(target)
+        end
+    end
+
     -- Dances with Luopans
     if target:getLocalVar("GEO_DWL_Locus_Area") == 1 and target:getCharVar("GEO_DWL_Luopan") == 0 then
         local ID = zones[target:getZoneID()]
         target:messageSpecial(ID.text.ENERGIES_COURSE)
 
         local maxWaitTime = 480  -- Max wait of 8 minutes
-        local secondsPerTick = GetHealingTickDelay()  -- NOTE: This value is server configurable.
+        local secondsPerTick = xi.settings.main.map.HEALING_TICK_DELAY;
         local minWaitTime = math.min(3 * secondsPerTick, maxWaitTime)
         local waitTimeInSeconds = math.random(minWaitTime, maxWaitTime)
         target:setLocalVar("GEO_DWL_Resting", os.time() + waitTimeInSeconds)
@@ -51,7 +65,7 @@ effect_object.onEffectTick = function(target, effect)
             if target:getContinentID() == 1 and target:hasStatusEffect(xi.effect.SIGNET) then
                 healHP = 10 + (3 * math.floor(target:getMainLvl() / 10)) + (healtime - 2) * (1 + math.floor(target:getMaxHP() / 300)) + target:getMod(xi.mod.HPHEAL)
             else
-                target:addTP(xi.settings.HEALING_TP_CHANGE)
+                target:addTP(xi.settings.main.HEALING_TP_CHANGE)
                 healHP = 10 + (healtime - 2) + target:getMod(xi.mod.HPHEAL)
             end
 

@@ -304,6 +304,7 @@ namespace luautils
             {
                 if (entry.extension() == ".lua")
                 {
+                    ShowDebug(fmt::format("Load All: {}", entry.relative_path().generic_string()));
                     auto result = lua.safe_script_file(entry.relative_path().generic_string());
                     if (!result.valid())
                     {

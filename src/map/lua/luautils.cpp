@@ -289,7 +289,7 @@ namespace luautils
                 }
             }
         }
-
+        ShowDebug("Loading pet scripts");
         // Pet Scripts
         CacheLuaObjectFromFile("./scripts/globals/pets/automaton.lua");
         CacheLuaObjectFromFile("./scripts/globals/pets/luopan.lua");
@@ -310,14 +310,14 @@ namespace luautils
                 }
             }
         }
-
+        ShowDebug("Loading Lua Modules");
         // Handle settings
         moduleutils::LoadLuaModules();
-
+        ShowDebug("Setting FileWatcher directories");
         filewatcher = std::make_unique<Filewatcher>(std::vector<std::string>{ "scripts", "modules", "settings" });
-
+        ShowDebug("Report Memory usage");
         TracyReportLuaMemory(lua.lua_state());
-
+        ShowDebug("Lua Init Complete");
         return 0;
     }
 

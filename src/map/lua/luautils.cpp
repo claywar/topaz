@@ -292,9 +292,12 @@ namespace luautils
         ShowDebug("Loading pet scripts");
         // Pet Scripts
         CacheLuaObjectFromFile("./scripts/globals/pets/automaton.lua");
+        ShowDebug("Luopan");
         CacheLuaObjectFromFile("./scripts/globals/pets/luopan.lua");
+        ShowDebug("Wyvern");
         CacheLuaObjectFromFile("./scripts/globals/pets/wyvern.lua");
 
+        ShowDebug("GLoadAll");
         if (gLoadAllLua) // Load all lua files (for sanity testing, no need for during regular use)
         {
             for (auto const& entry : sorted_directory_iterator<std::filesystem::recursive_directory_iterator>("./scripts"))

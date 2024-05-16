@@ -18,6 +18,9 @@ Checks: >
   modernize-use-override,
   performance-*,
 
+  # TODO
+  -nan-infinity-disabled
+
 # TODO: Enable these
 #  concurrency-mt-unsafe,
 #  cppcoreguidelines-prefer-member-initializer,

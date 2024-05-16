@@ -666,4 +666,4 @@ jobs:
     - name: Startup checks
       shell: bash
       run: |
-        .venv/bin/python3 ./tools/ci/startup_checks.py
+        python3 ./tools/ci/startup_checks.py

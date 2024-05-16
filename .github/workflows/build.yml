@@ -188,7 +188,7 @@ jobs:
         fi
         exit 0
 
-  Linux_Clang15_64bit:
+  Linux_Clang18_64bit:
     needs: Sanity_Checks
     runs-on: ubuntu-24.04
     steps:
@@ -223,7 +223,7 @@ jobs:
           xi_search
           xi_world
 
-  Linux_ClangTidy15_64bit:
+  Linux_ClangTidy18_64bit:
     needs: Sanity_Checks
     runs-on: ubuntu-24.04
     steps:
@@ -334,7 +334,7 @@ jobs:
       - name: Enable Modules
         shell: bash
         run: |
-          .venv/bin/python3 << EOF
+          python3 << EOF
           with open("modules/init.txt", "w") as f:
               f.write("custom\n")
               f.write("era\n")
@@ -371,7 +371,7 @@ jobs:
 
   Full_Startup_Checks_Linux:
     runs-on: ubuntu-24.04
-    needs: Linux_Clang15_64bit
+    needs: Linux_Clang18_64bit
     services:
       mysql:
         image: mariadb:10.6
@@ -550,7 +550,7 @@ jobs:
 
   MultiInstance_Startup_Checks_Linux:
     runs-on: ubuntu-24.04
-    needs: Linux_Clang15_64bit
+    needs: Linux_Clang18_64bit
     services:
       mysql:
         image: mariadb:10.6

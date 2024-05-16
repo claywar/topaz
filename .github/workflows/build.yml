@@ -25,8 +25,14 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y software-properties-common cppcheck luajit-5.1-dev luarocks mariadb-server-core mariadb-server mariadb-client libmariadb-dev-compat binutils-dev
-        pip install --break-system-packages -r tools/requirements.txt
+        sudo apt-get install -y software-properties-common cppcheck luajit-5.1-dev luarocks mariadb-server-core mariadb-server mariadb-client libmariadb-dev-compat binutils-dev clang-format
+
+        mkdir .venv
+        python3 -m venv .venv
+        source .venv/bin/activate
+        which python
+
+        .venv/bin/pip install -r tools/requirements.txt
         luarocks install luacheck --local
         npm install -g diff-so-fancy
     - id: changed-files
@@ -88,15 +94,15 @@ jobs:
           exit 1
         fi
         exit 0
-    - name: CPP Formatting Checks (clang-format-15)
+    - name: CPP Formatting Checks (clang-format-18)
       if: always()
       run: |
-        clang-format-15 -version
+        clang-format-18 -version
         touch cpp_formatting_checks.txt
         for changed_file in ${{ steps.changed-files.outputs.all }}; do
           if [[ -f $changed_file ]]; then
             if [[ $changed_file == *.cpp || $changed_file == *.h ]]; then
-              clang-format-15 -style=file -i ${changed_file}
+              clang-format-18 -style=file -i ${changed_file}
             fi
           fi
         done
@@ -125,7 +131,8 @@ jobs:
       if: always()
       run: |
         touch lua_checks.txt
-        python3 tools/ci/lua_stylecheck.py test >> lua_checks.txt
+        pwd
+        .venv/bin/python3 tools/ci/lua_stylecheck.py test >> lua_checks.txt
 
         for changed_file in ${{ steps.changed-files.outputs.all }}; do
           if [[ -f $changed_file ]]; then
@@ -135,7 +142,7 @@ jobs:
           fi
         done
 
-        python3 tools/ci/check_lua_binding_usage.py >> lua_checks.txt
+        .venv/bin/python3 tools/ci/check_lua_binding_usage.py >> lua_checks.txt
 
         cat lua_checks.txt
         if [ -s lua_checks.txt ]
@@ -155,7 +162,7 @@ jobs:
           fi
         done
 
-        python3 tools/price_checker.py >> sql_checks.txt
+        .venv/bin/python3 tools/price_checker.py >> sql_checks.txt
 
         cat sql_checks.txt
         if [ -s sql_checks.txt ]
@@ -327,7 +334,7 @@ jobs:
       - name: Enable Modules
         shell: bash
         run: |
-          python3 << EOF
+          .venv/bin/python3 << EOF
           with open("modules/init.txt", "w") as f:
               f.write("custom\n")
               f.write("era\n")
@@ -403,7 +410,7 @@ jobs:
     - name: Enable Modules
       shell: bash
       run: |
-        python3 << EOF
+        .venv/bin/python3 << EOF
         with open("modules/init.txt", "w") as f:
             f.write("custom\n")
             f.write("era\n")
@@ -492,7 +499,7 @@ jobs:
           VALUES(1, 'GodMode', 1);"
 
           printf "\nRunning HeadlessXI for 60 seconds\n"
-          python3 << EOF
+          .venv/bin/python3 << EOF
           import time
           try:
               from tools.headlessxi.hxiclient import HXIClient
@@ -659,4 +666,4 @@ jobs:
     - name: Startup checks
       shell: bash
       run: |
-        python3 ./tools/ci/startup_checks.py
+        .venv/bin/python3 ./tools/ci/startup_checks.py

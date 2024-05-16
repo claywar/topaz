@@ -360,7 +360,7 @@ jobs:
           fetch-depth: 1
       - name: Install Dependencies (Brew)
         run: |
-          brew install mariadb zeromq zmq luajit
+          brew install mariadb zeromq zmq luajit llvm@18
       - name: Configure CMake
         run: |
           mkdir -p build
@@ -392,8 +392,14 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y software-properties-common cmake mariadb-client-10.6 libmariadb-dev-compat libluajit-5.1-dev libzmq3-dev zlib1g-dev libssl-dev luarocks binutils-dev
-        pip install bcrypt
+        sudo apt-get install -y software-properties-common cmake mariadb-server-core mariadb-server mariadb-client libmariadb-dev-compat libluajit-5.1-dev libzmq3-dev zlib1g-dev libssl-dev luarocks binutils-dev
+
+        mkdir .venv
+        python3 -m venv .venv
+        source .venv/bin/activate
+        which python
+
+        .venv/bin/pip install bcrypt
     - name: Verify MySQL connection from container
       run: |
         mysql -h 127.0.0.1 -uroot -proot -e "SHOW DATABASES"
@@ -571,7 +577,7 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y software-properties-common cmake mariadb-client-10.6 libmariadb-dev-compat libluajit-5.1-dev libzmq3-dev zlib1g-dev libssl-dev luarocks binutils-dev
+        sudo apt-get install -y software-properties-common cmake mariadb-server-core mariadb-server mariadb-client libmariadb-dev-compat libluajit-5.1-dev libzmq3-dev zlib1g-dev libssl-dev luarocks binutils-dev
     - name: Verify MySQL connection from container
       run: |
         mysql -h 127.0.0.1 -uroot -proot -e "SHOW DATABASES"

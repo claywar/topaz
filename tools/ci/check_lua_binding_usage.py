@@ -130,7 +130,7 @@ def main():
 
                     line = line.replace("\n", "")
 
-                    for match in re.finditer('(?<=:)[^\(\/\\\: "]*', line):
+                    for match in re.finditer(r'(?<=:)[^\(\/\\\: "]*', line):
                         if (
                             len(match.group()) > 1
                             and match.group() not in function_names

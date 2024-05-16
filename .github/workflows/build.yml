@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   Sanity_Checks:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v3
       with:
@@ -25,8 +25,8 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y software-properties-common cppcheck luajit-5.1-dev luarocks mariadb-server-10.6 mariadb-client-10.6 libmariadb-dev-compat binutils-dev
-        pip install -r tools/requirements.txt
+        sudo apt-get install -y software-properties-common cppcheck luajit-5.1-dev luarocks mariadb-server-core mariadb-server mariadb-client libmariadb-dev-compat binutils-dev
+        pip install --break-system-packages -r tools/requirements.txt
         luarocks install luacheck --local
         npm install -g diff-so-fancy
     - id: changed-files
@@ -183,7 +183,7 @@ jobs:
 
   Linux_Clang15_64bit:
     needs: Sanity_Checks
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v3
       with:
@@ -218,12 +218,12 @@ jobs:
 
   Linux_ClangTidy15_64bit:
     needs: Sanity_Checks
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     # workaround for broken clang on ubuntu runner until fixed: https://github.com/actions/runner-images/issues/8659
     - uses: claywar/workaround8649@4892524a133793c85e25513fae79fc968e63877c
       with:
-        os: ubuntu-22.04
+        os: ubuntu-24.04
     - uses: actions/checkout@v3
       with:
         fetch-depth: 1
@@ -253,7 +253,7 @@ jobs:
 
   Linux_GCC13_64bit:
     needs: Sanity_Checks
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v3
       with:
@@ -363,7 +363,7 @@ jobs:
           cmake --build build -j4
 
   Full_Startup_Checks_Linux:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: Linux_Clang15_64bit
     services:
       mysql:
@@ -542,7 +542,7 @@ jobs:
         fi
 
   MultiInstance_Startup_Checks_Linux:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: Linux_Clang15_64bit
     services:
       mysql:

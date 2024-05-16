@@ -63,6 +63,7 @@ function(set_project_warnings project_name)
       -Wno-unused-parameter           # warn on unused function parameters
       -Wno-missing-field-initializers
       -Wno-sign-compare
+      -Wno-nan-infinity-disabled
 
       # TODO: This is good, but it's Clang only
       # -Wunused-private-field # warn on unused private fields

@@ -353,14 +353,15 @@ jobs:
   MacOS_64bit:
     needs: Sanity_Checks
     # https://github.com/actions/runner-images/blob/main/images/macos/macos-13-Readme.md
-    runs-on: macos-13
+    runs-on: macos-14
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 1
       - name: Install Dependencies (Brew)
         run: |
-          brew install mariadb zeromq zmq luajit llvm@18
+          brew update
+          brew install mariadb zeromq zmq luajit llvm
       - name: Configure CMake
         run: |
           mkdir -p build

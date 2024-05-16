@@ -410,7 +410,7 @@ jobs:
     - name: Enable Modules
       shell: bash
       run: |
-        .venv/bin/python3 << EOF
+        python3 << EOF
         with open("modules/init.txt", "w") as f:
             f.write("custom\n")
             f.write("era\n")

@@ -313,7 +313,7 @@ xi.spells.enfeebling.calculateDuration = function(caster, target, spellId, spell
     return math.floor(duration)
 end
 
-xi.spells.enfeebling.handleEffectNullification = function(caster, target, spell, spellId, spellEffect)
+xi.spells.enfeebling.handleEffectNullification = function(caster, target, spell, spellEffect)
     -- Determine if target mob is completely immune to a status effect.
     if xi.combat.statusEffect.isTargetImmune(target, spellEffect, spell:getElement()) then
         spell:setMsg(xi.msg.basic.MAGIC_COMPLETE_RESIST)
@@ -329,33 +329,11 @@ xi.spells.enfeebling.handleEffectNullification = function(caster, target, spell,
         return true
     end
 
-    -- Table for elemental debuff effects and which effect nullifies it.
-    local elementalDebuffTable =
-    {
-        -- effect = Nullified by
-        [xi.effect.BURN ] = { xi.effect.DROWN },
-        [xi.effect.CHOKE] = { xi.effect.FROST },
-        [xi.effect.DROWN] = { xi.effect.SHOCK },
-        [xi.effect.FROST] = { xi.effect.BURN  },
-        [xi.effect.RASP ] = { xi.effect.CHOKE },
-        [xi.effect.SHOCK] = { xi.effect.RASP  },
-    }
+    -- Target already has an status effect that nullifies current.
+    if xi.combat.statusEffect.isEffectNullified(spellEffect) then
+        spell:setMsg(xi.msg.basic.MAGIC_NO_EFFECT)
 
-    -- Elemental DoTs effects.
-    if
-        spellEffect == xi.effect.BURN or
-        spellEffect == xi.effect.CHOKE or
-        spellEffect == xi.effect.DROWN or
-        spellEffect == xi.effect.FROST or
-        spellEffect == xi.effect.RASP or
-        spellEffect == xi.effect.SHOCK
-    then
-        -- Target already has an status effect that nullifies current.
-        if target:hasStatusEffect(elementalDebuffTable[spellEffect][1]) then
-            spell:setMsg(xi.msg.basic.MAGIC_NO_EFFECT)
-
-            return true
-        end
+        return true
     end
 
     return false
@@ -369,7 +347,7 @@ xi.spells.enfeebling.useEnfeeblingSpell = function(caster, target, spell)
     ------------------------------
     -- STEP 1: Check spell nullification.
     ------------------------------
-    if xi.spells.enfeebling.handleEffectNullification(caster, target, spell, spellId, spellEffect) then
+    if xi.spells.enfeebling.handleEffectNullification(caster, target, spell, spellEffect) then
         return spellEffect
     end
 

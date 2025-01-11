@@ -440,12 +440,12 @@ namespace charutils
             PChar->m_jobMasterDisplay = rset->get<uint32>("job_master") > 0;
 
             uint32 playerSettings = rset->get<uint32>("settings");
-            uint32 MassageFilter  = rset->get<uint32>("chatfilters_1");
-            uint32 MassageFilter2 = rset->get<uint32>("chatfilters_2");
+            uint32 MessageFilter  = rset->get<uint32>("chatfilters_1");
+            uint32 MessageFilter2 = rset->get<uint32>("chatfilters_2");
 
             std::memcpy(&PChar->playerConfig, &playerSettings, sizeof(uint32_t));
-            std::memcpy(&PChar->playerConfig.MassageFilter, &MassageFilter, sizeof(uint32_t));
-            std::memcpy(&PChar->playerConfig.MassageFilter2, &MassageFilter2, sizeof(uint32_t));
+            std::memcpy(&PChar->playerConfig.MessageFilter, &MessageFilter, sizeof(uint32_t));
+            std::memcpy(&PChar->playerConfig.MessageFilter2, &MessageFilter2, sizeof(uint32_t));
         }
 
         // TODO: Rename LoadFromCharSpellsSQL
@@ -5518,12 +5518,12 @@ namespace charutils
         uint32_t    filters = {};
         const char* Query   = "UPDATE chars SET chatfilters_1 = %llu WHERE charid = %u";
 
-        std::memcpy(&filters, &PChar->playerConfig.MassageFilter, sizeof(uint32_t));
+        std::memcpy(&filters, &PChar->playerConfig.MessageFilter, sizeof(uint32_t));
 
         _sql->Query(Query, filters, PChar->id);
         Query = "UPDATE chars SET chatfilters_2 = %llu WHERE charid = %u";
 
-        std::memcpy(&filters, &PChar->playerConfig.MassageFilter2, sizeof(uint32_t));
+        std::memcpy(&filters, &PChar->playerConfig.MessageFilter2, sizeof(uint32_t));
         _sql->Query(Query, filters, PChar->id);
     }
 

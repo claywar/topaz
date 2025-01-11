@@ -6247,8 +6247,8 @@ void SmallPacket0x0DB(map_session_data_t* const PSession, CCharEntity* const PCh
     uint32_t oldChatFilter2  = {};
 
     std::memcpy(&oldPlayerConfig, &PChar->playerConfig, sizeof(uint32_t));
-    std::memcpy(&oldChatFilter1, &PChar->playerConfig.MassageFilter, sizeof(uint32_t));
-    std::memcpy(&oldChatFilter2, &PChar->playerConfig.MassageFilter2, sizeof(uint32_t));
+    std::memcpy(&oldChatFilter1, &PChar->playerConfig.MessageFilter, sizeof(uint32_t));
+    std::memcpy(&oldChatFilter2, &PChar->playerConfig.MessageFilter2, sizeof(uint32_t));
 
     // Player updated their search language(s).
     if (packet.Kind == 1)
@@ -6270,8 +6270,8 @@ void SmallPacket0x0DB(map_session_data_t* const PSession, CCharEntity* const PCh
 
     if (oldChatFilter1 != packet.ConfigSys[1] || oldChatFilter2 != packet.ConfigSys[2])
     {
-        std::memcpy(&PChar->playerConfig.MassageFilter, &packet.ConfigSys[1], sizeof(uint32_t));
-        std::memcpy(&PChar->playerConfig.MassageFilter2, &packet.ConfigSys[2], sizeof(uint32_t));
+        std::memcpy(&PChar->playerConfig.MessageFilter, &packet.ConfigSys[1], sizeof(uint32_t));
+        std::memcpy(&PChar->playerConfig.MessageFilter2, &packet.ConfigSys[2], sizeof(uint32_t));
         charutils::SaveChatFilterFlags(PChar); // Do we even need to save chat filter flags? When the client logs in, they send the chat filters.
     }
 

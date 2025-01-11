@@ -126,7 +126,7 @@ INSERT INTO `item_usable` VALUES (4183,'konron_hassen',1,1,47,0,0,0,0,0);
 INSERT INTO `item_usable` VALUES (4184,'kongou_inaho',1,1,48,0,0,0,0,0);
 INSERT INTO `item_usable` VALUES (4185,'meifu_goma',1,1,49,0,0,0,0,0);
 INSERT INTO `item_usable` VALUES (4186,'airborne',1,1,50,0,0,0,0,0);
-INSERT INTO `item_usable` VALUES (4187,'bastok_mines_gate_glyph',1,10,0,0,0,0,0,0);
+INSERT INTO `item_usable` VALUES (4187,'bastok_mines_gate_glyph',1,10,80,3,0,0,0,0);
 INSERT INTO `item_usable` VALUES (4188,'bastok_markets_gate_glyph',1,10,80,3,0,0,0,0);
 INSERT INTO `item_usable` VALUES (4189,'port_bastok_gate_glyph',1,10,80,3,0,0,0,0);
 INSERT INTO `item_usable` VALUES (4190,'eastern_san_doria_gate_glyph',1,10,80,3,0,0,0,0);

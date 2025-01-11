@@ -26,7 +26,6 @@ cppcheck -v -j 4 --force --quiet --inconclusive --std=c++17 \
 --suppress=unmatchedSuppression \
 --suppress=missingIncludeSystem \
 --suppress=missingInclude \
---suppress=checkersReport \
 --enable=information,performance,portability --inline-suppr \
 --inconclusive \
 -DSA_INTERRUPT -DZMQ_DEPRECATED -DZMQ_EVENT_MONITOR_STOPPED -DTRACY_ENABLE \
